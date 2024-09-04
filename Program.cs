@@ -5,7 +5,7 @@ namespace BasicLibrary
     internal class Program
     {
         static List<(string BName, string BAuthor, int ID ,int quantity)> Books = new List<(string BName, string BAuthor, int ID, int quantity)>();
-        static string filePath = "C:\\Users\\Karim\\Downloads\\OutSystem_Course\\GitHubRepos\\Data\\lib.txt";
+        static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
         //this ids for test
         static void Main(string[] args)
         {// downloaded form ahmed device 
@@ -146,7 +146,7 @@ namespace BasicLibrary
         {
             try
             {
-                using (StreamWriter writer = new StreamWriter(filePath))
+                using (StreamWriter writer = new StreamWriter(filePath,true))
                 {
                     foreach (var book in Books)
                     {
@@ -160,6 +160,34 @@ namespace BasicLibrary
                 Console.WriteLine($"Error saving to file: {ex.Message}");
             }
         }
+        static void Borrow() 
+        
+        {
+            Console.WriteLine("Enter the book name you want");
+            string name = Console.ReadLine();
+            bool flag = false;
+
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].BName == name && Books[i].quantity  > 0)
+                {
+                    
+                    Console.WriteLine("Book is available ");
+                    int newquantity = Books[i].quantity - 1;
+                    Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
+                    flag = true;
+                    break;
+                }
+            }
+
+            if (flag != true)
+            { Console.WriteLine("book not found"); }
+        }
+
 
     }
+
+    
+
+
 }
