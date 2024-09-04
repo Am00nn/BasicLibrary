@@ -161,7 +161,7 @@ namespace BasicLibrary
             }
         }
      
-        static void Borrow() 
+        static void BorrowBook() 
         
         {
             Console.WriteLine("Enter the book name you want");
@@ -236,7 +236,57 @@ namespace BasicLibrary
 
 
         }
+        static void UserMenu()
+        {
+            bool ExitFlag = false;
+            do
+            {
 
+                Console.WriteLine("Welcome user");
+                Console.WriteLine("\n Enter the char of operation you need :");
+                Console.WriteLine("\n A- Search for Book by Name");
+                Console.WriteLine("\n B- Borrow Books");
+                Console.WriteLine("\n C- Return Books");
+                Console.WriteLine("\n D- Save and Exit");
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "A":
+                        SearchForBook();
+                        break;
+
+                    case "B":
+                        BorrowBook();
+                        break;
+
+                    case "C":
+                        ReturnBooks();
+                        break;
+
+                    case "D":
+                        SaveBooksToFile();
+                        ExitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Sorry your choice was wrong");
+                        break;
+
+
+
+                }
+
+                Console.WriteLine("press any key to continue");
+                string cont = Console.ReadLine();
+
+                Console.Clear();
+
+            } while (ExitFlag != true);
+
+
+        }
 
 
 
