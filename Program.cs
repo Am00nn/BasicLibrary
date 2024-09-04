@@ -184,7 +184,39 @@ namespace BasicLibrary
             if (flag != true)
             { Console.WriteLine("book not found"); }
         }
+        static void ReturnBooks()
+        {
 
+            Console.WriteLine("Enter the book name you want");
+            string name = Console.ReadLine();
+
+            bool flage = false;
+            for (int i = 0; i < Books.Count; i++) {
+
+                if (Books[i].BName == name)
+                { 
+                
+                int newquantity = Books[i].quantity + 1;
+
+                 Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
+                 flage = true;
+                 break ;
+
+                }
+            
+            
+            
+            }
+
+
+
+
+
+
+
+
+
+        }
         static void AdminMenu() 
         {
             bool ExitFlag = false;
@@ -233,6 +265,8 @@ namespace BasicLibrary
                 Console.Clear();
 
             } while ( ExitFlag != true);
+
+  
 
 
         }
