@@ -160,7 +160,7 @@ namespace BasicLibrary
                 Console.WriteLine($"Error saving to file: {ex.Message}");
             }
         }
-        //test naming
+     
         static void Borrow() 
         
         {
@@ -184,6 +184,63 @@ namespace BasicLibrary
             if (flag != true)
             { Console.WriteLine("book not found"); }
         }
+
+        static void AdminMenu() 
+        {
+            bool ExitFlag = false;
+            do
+            {
+               
+                Console.WriteLine("Welcome Admin");
+                Console.WriteLine("\n Enter the char of operation you need :");
+                Console.WriteLine("\n A- Add New Book");
+                Console.WriteLine("\n B- Display All Books");
+                Console.WriteLine("\n C- Search for Book by Name");
+                Console.WriteLine("\n D- Save and Exit");
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "A":
+                        AddnNewBook();
+                        break;
+
+                    case "B":
+                        ViewAllBooks();
+                        break;
+
+                    case "C":
+                        SearchForBook();
+                        break;
+
+                    case "D":
+                        SaveBooksToFile();
+                        ExitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Sorry your choice was wrong");
+                        break;
+
+
+
+                }
+
+                Console.WriteLine("press any key to continue");
+                string cont = Console.ReadLine();
+
+                Console.Clear();
+
+            } while ( ExitFlag != true);
+
+
+        }
+
+
+
+
+
 
 
     }
