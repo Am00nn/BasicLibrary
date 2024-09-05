@@ -7,7 +7,14 @@ namespace BasicLibrary
     {
         static List<(string BName, string BAuthor, int ID, int quantity)> Books = new List<(string BName, string BAuthor, int ID, int quantity)>();
         static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
-        //this ids for test
+       
+
+
+
+
+        static int lastID = 0;
+
+
         static void Main(string[] args)
         {// downloaded form ahmed device 
             bool ExitFlag = false;
@@ -81,13 +88,6 @@ namespace BasicLibrary
             Console.WriteLine("Enter Book Author");
             string author = Console.ReadLine();
 
-            Console.WriteLine("Enter Book ID");
-            if (!int.TryParse(Console.ReadLine(), out int ID))
-
-            {
-                Console.WriteLine("Invalid input for Book ID. Please enter a valid integer.");
-                return;
-            }
             Console.WriteLine("Enter Book quantity");
             if (!int.TryParse(Console.ReadLine(), out int quantity))
             {
@@ -95,9 +95,9 @@ namespace BasicLibrary
 
             }
 
-
+            int ID = ++lastID;
             Books.Add((name, author, ID, quantity));
-            Console.WriteLine("Book Added Succefully");
+            Console.WriteLine("Book Added Succefully with ID : "+ID);
 
         }
 
