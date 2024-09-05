@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.Linq;
 
 namespace BasicLibrary
 {
@@ -29,10 +30,11 @@ namespace BasicLibrary
                 Console.WriteLine("\n choose A for admin or B for user or C for save & Exit:");
                 Console.WriteLine("\n A- Admin Menu");
                 Console.WriteLine("\n B- User Menu");
+
                 Console.WriteLine("\n C- Save and Exit");
 
 
-                string choice = Console.ReadLine().ToUpper(); 
+                string choice = Console.ReadLine().ToUpper();
 
                 try
                 {
@@ -132,10 +134,10 @@ namespace BasicLibrary
             }
             catch (Exception ex)
             {
-                
-                
-                
-                
+
+
+
+
                 Console.WriteLine("An error occurred while displaying the books: " + ex.Message);
             }
 
@@ -227,7 +229,7 @@ namespace BasicLibrary
 
         {
 
-        
+
             try
             {
                 int BookNumber = 0;
@@ -285,6 +287,104 @@ namespace BasicLibrary
 
         }
 
+        static void EditBook()
+
+        {
+
+
+            bool ExitFlag = false;
+            do
+            {
+
+                Console.Write("Enter what you want to edit :");
+                Console.Write(" A- Book Name  ");
+                Console.Write(" B- Book Author  ");
+                Console.Write(" C- Book quantity ");
+                Console.Write(" D- Exit ");
+
+                string choice = Console.ReadLine().ToUpper(); ;
+
+                Console.WriteLine("Enter the book name you want");
+                string name = Console.ReadLine();
+                bool flag = false;
+                switch (choice)
+                {
+                    case "A":
+
+                     
+                        for (int i = 0; i < Books.Count; i++)
+                        {
+                            if (Books[i].BName == name)
+                            {
+                                Console.WriteLine("Enter new book name :");
+                                String Newname = Console.ReadLine();
+                                Books[i] = (Newname, Books[i].BAuthor, Books[i].ID, Books[i].quantity);
+                                Console.WriteLine("Name Changed successfully ");
+                                flag = true;
+                                break;
+                            }
+                        }
+                        break;
+
+                    case "B":
+
+                        for (int i = 0; i < Books.Count; i++)
+                        {
+                            if (Books[i].BName == name)
+                            {
+                                Console.WriteLine("Enter new book Author :");
+                                string NewAuthor = Console.ReadLine();
+                                Books[i] = (Books[i].BName, NewAuthor, Books[i].ID, Books[i].quantity);
+                                Console.WriteLine("Author Changed successfully ");
+                                flag = true;
+                                break;
+
+                            }
+
+                        }
+
+                        break;
+
+                    case "C":
+
+                        for (int i = 0; i < Books.Count; i++)
+                        {
+                            if (Books[i].BName == name)
+                            {
+                                Console.WriteLine("Enter new book Quantity :");
+                                int Newquantity = int.Parse(Console.ReadLine());
+                                Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, Newquantity);
+                                Console.WriteLine("Author Changed successfully ");
+                                flag = true;
+                                break;
+
+                            }
+
+                        }
+                        break;
+
+                    case "D":
+                        
+                        ExitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Sorry your choice was wrong");
+                        break;
+
+
+
+                }
+
+                Console.WriteLine("press any key to continue");
+                string cont = Console.ReadLine();
+
+                Console.Clear();
+
+            } while (ExitFlag != true);
+
+
+        }
 
 
         static void ReturnBooks()
@@ -294,38 +394,40 @@ namespace BasicLibrary
             string name = Console.ReadLine();
 
             bool flage = false;
-            for (int i = 0; i < Books.Count; i++) {
+            for (int i = 0; i < Books.Count; i++)
+            {
 
                 if (Books[i].BName == name)
-                { 
-                
-                int newquantity = Books[i].quantity + 1;
+                {
 
-                 Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
+                    int newquantity = Books[i].quantity + 1;
+
+                    Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
                     Console.WriteLine("The book has been returned ");
                     flage = true;
-                 break ;
+                    break;
 
                 }
-            
-            
-            
+
+
+
             }
 
 
         }
-        static void AdminMenu() 
+        static void AdminMenu()
         {
             bool ExitFlag = false;
             do
             {
-               
+
                 Console.WriteLine("Welcome Admin");
                 Console.WriteLine("\n Enter the char of operation you need :");
                 Console.WriteLine("\n A- Add New Book");
                 Console.WriteLine("\n B- Display All Books");
                 Console.WriteLine("\n C- Search for Book by Name");
-                Console.WriteLine("\n D- Save and Exit");
+                Console.WriteLine("\n D- Edit book");
+                Console.WriteLine("\n F- Save and Exit");
 
                 string choice = Console.ReadLine().ToUpper(); ;
 
@@ -342,8 +444,10 @@ namespace BasicLibrary
                     case "C":
                         SearchForBook();
                         break;
-
                     case "D":
+                        EditBook();
+                        break;
+                    case "F":
                         SaveBooksToFile();
                         ExitFlag = true;
                         break;
@@ -361,9 +465,9 @@ namespace BasicLibrary
 
                 Console.Clear();
 
-            } while ( ExitFlag != true);
+            } while (ExitFlag != true);
 
-  
+
 
 
         }
@@ -422,11 +526,9 @@ namespace BasicLibrary
 
 
 
-
-
     }
 
-    
-
-
 }
+   
+
+
