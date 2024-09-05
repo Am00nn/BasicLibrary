@@ -565,13 +565,15 @@ namespace BasicLibrary
             }
 
 
+
+
         static void RegisterUser()
         {
             Console.Write("Enter Username: ");
             string Username = Console.ReadLine();
 
             Console.Write("Enter Email: ");
-          string  Email = Console.ReadLine();
+            string Email = Console.ReadLine();
 
             Console.Write("Enter User ID: ");
             string UserID = Console.ReadLine();
