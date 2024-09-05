@@ -32,7 +32,7 @@ namespace BasicLibrary
                 Console.WriteLine("\n C- Save and Exit");
 
 
-                string choice = Console.ReadLine().ToUpper(); ;
+                string choice = Console.ReadLine().ToUpper(); 
 
                 try
                 {
@@ -151,15 +151,22 @@ namespace BasicLibrary
             try
             {
 
+                Console.WriteLine("Enter the book name you want");
+                string name = Console.ReadLine();
+                bool flag = false;
 
+                for (int i = 0; i < Books.Count; i++)
+                {
+                    if (Books[i].BName == name)
+                    {
+                        Console.WriteLine("Book Author is : " + Books[i].BAuthor);
+                        flag = true;
+                        break;
+                    }
+                }
 
-
-
-
-
-
-
-
+                if (flag != true)
+                { Console.WriteLine("book not found"); }
 
             }
             catch (Exception ex)
@@ -167,22 +174,7 @@ namespace BasicLibrary
 
                 Console.WriteLine("An error occurred while searching for the book: " + ex.Message);
             }
-            Console.WriteLine("Enter the book name you want");
-            string name = Console.ReadLine();
-            bool flag = false;
 
-            for (int i = 0; i < Books.Count; i++)
-            {
-                if (Books[i].BName == name)
-                {
-                    Console.WriteLine("Book Author is : " + Books[i].BAuthor);
-                    flag = true;
-                    break;
-                }
-            }
-
-            if (flag != true)
-            { Console.WriteLine("book not found"); }
         }
 
         static void LoadBooksFromFile()
@@ -234,7 +226,6 @@ namespace BasicLibrary
         static void BorrowBook()
 
         {
-
 
         
             try
@@ -336,7 +327,7 @@ namespace BasicLibrary
                 Console.WriteLine("\n C- Search for Book by Name");
                 Console.WriteLine("\n D- Save and Exit");
 
-                string choice = Console.ReadLine();
+                string choice = Console.ReadLine().ToUpper(); ;
 
                 switch (choice)
                 {
@@ -389,7 +380,7 @@ namespace BasicLibrary
                 Console.WriteLine("\n C- Return Books");
                 Console.WriteLine("\n D- Save and Exit");
 
-                string choice = Console.ReadLine();
+                string choice = Console.ReadLine().ToUpper(); ;
 
                 switch (choice)
                 {
