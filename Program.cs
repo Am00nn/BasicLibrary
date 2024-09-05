@@ -6,6 +6,9 @@ namespace BasicLibrary
     internal class Program
     {
         static List<(string BName, string BAuthor, int ID, int quantity)> Books = new List<(string BName, string BAuthor, int ID, int quantity)>();
+        static List<(string Username, string Email, string UserID)> users = new List<(string Username, string Email, string UserID)>();
+        static List<(string Username, string Email, string password)> Admin = new List<(string Username, string Email, string password)>();
+
         static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
         static string filePathBorrow = "C:\\Users\\Lenovo\\source\\repos\\test\\borrow.txt";
         static string filePathAdmin = "C:\\Users\\Lenovo\\source\\repos\\test\\Admin.txt";
@@ -447,6 +450,7 @@ namespace BasicLibrary
 
 
             }
+           
             static void AdminMenu()
             {
                 bool ExitFlag = false;
@@ -561,8 +565,39 @@ namespace BasicLibrary
             }
 
 
+        static void RegisterUser()
+        {
+            Console.Write("Enter Username: ");
+            string Username = Console.ReadLine();
 
-        
+            Console.Write("Enter Email: ");
+          string  Email = Console.ReadLine();
+
+            Console.Write("Enter User ID: ");
+            string UserID = Console.ReadLine();
+
+            Console.WriteLine("User registered successfully!");
+
+            users.Add((Username, Email, UserID));
+        }
+
+        static void RegisterAdmin()
+        {
+            Console.Write("Enter Username: ");
+            string Username = Console.ReadLine();
+
+            Console.Write("Enter Email: ");
+            string Email = Console.ReadLine();
+
+            Console.Write("Enter Password: ");
+            string password = Console.ReadLine();
+
+            Console.WriteLine("Admin registered successfully!");
+            Admin.Add((Username, Email, password));
+        }
+
+
+
     }
 
 }
