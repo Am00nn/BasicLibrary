@@ -286,6 +286,25 @@ namespace BasicLibrary
             }
 
         }
+         static void DeleteBook()
+        {
+
+            Console.WriteLine("Enter the book name you want delete :");
+            string name = Console.ReadLine();
+            bool flag = false;
+
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].BName == name)
+                {
+                    Books.RemoveAt(i);
+                    flag = true;
+                    Console.WriteLine("The book"+ name + "has been deleted successfully.");
+                    break;
+                }
+            }
+
+        }
 
         static void EditBook()
 
@@ -386,7 +405,6 @@ namespace BasicLibrary
 
         }
 
-
         static void ReturnBooks()
         {
 
@@ -427,6 +445,7 @@ namespace BasicLibrary
                 Console.WriteLine("\n B- Display All Books");
                 Console.WriteLine("\n C- Search for Book by Name");
                 Console.WriteLine("\n D- Edit book");
+                Console.WriteLine("\n E- delet book");
                 Console.WriteLine("\n F- Save and Exit");
 
                 string choice = Console.ReadLine().ToUpper(); ;
@@ -446,6 +465,10 @@ namespace BasicLibrary
                         break;
                     case "D":
                         EditBook();
+                        break;
+
+                    case "E":
+                        DeleteBook();
                         break;
                     case "F":
                         SaveBooksToFile();
