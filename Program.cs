@@ -132,6 +132,10 @@ namespace BasicLibrary
             }
             catch (Exception ex)
             {
+                
+                
+                
+                
                 Console.WriteLine("An error occurred while displaying the books: " + ex.Message);
             }
 
