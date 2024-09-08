@@ -7,7 +7,7 @@ namespace BasicLibrary
     {
         static List<(string BName, string BAuthor, int ID, int quantity)> Books = new List<(string BName, string BAuthor, int ID, int quantity)>();
         static List<(string Username, string Email, string UserID)> users = new List<(string Username, string Email, string UserID)>();
-        static List<(string Username, string Email, string password)> Admin = new List<(string Username, string Email, string password)>();
+        static List<(string Username1, string Email, string password)> Admin = new List<(string Username1, string Email, string password)>();
 
         static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
         static string filePathBorrow = "C:\\Users\\Lenovo\\source\\repos\\test\\borrow.txt";
@@ -23,7 +23,7 @@ namespace BasicLibrary
         {
             bool ExitFlag = false;
 
-
+            LoadAdminFromFile();
             try
             {
                 LoadBooksFromFile();
@@ -37,6 +37,7 @@ namespace BasicLibrary
 
             do
             {
+
                 Console.WriteLine("Welcome to Lirary");
                 Console.WriteLine("\n choose A for admin or B for user or C for save & Exit:");
                 Console.WriteLine("\n A- Admin Menu");
@@ -52,7 +53,7 @@ namespace BasicLibrary
                     switch (choice)
                     {
                         case "A":
-                            AdminMenu();
+                            UserMenuu();
                             break;
 
                         case "B":
@@ -222,8 +223,34 @@ namespace BasicLibrary
                     Console.WriteLine($"Error loading from file: {ex.Message}");
                 }
             }
+        static void LoadAdminFromFile()
+        {
+            try
+            {
+                if (File.Exists(filePathAdmin))
+                {
+                    using (StreamReader reader = new StreamReader(filePathAdmin))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var parts = line.Split('|');
+                            if (parts.Length == 3)
+                            {
+                                Admin.Add((parts[0], parts[1],(parts[2])));
+                            }
+                        }
+                    }
+                    Console.WriteLine("Admins loaded from file successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
+            }
+        }
 
-            static void SaveBooksToFile()
+        static void SaveBooksToFile()
             {
                 try
                 {
@@ -241,8 +268,26 @@ namespace BasicLibrary
                     Console.WriteLine($"Error saving to file: {ex.Message}");
                 }
             }
+        static void SaveAdminToFile()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePathAdmin, true))
+                {
+                    foreach (var admins in Admin)
+                    {
+                        writer.WriteLine($"{admins.Username1}|{admins.Email}|{admins.password}");
+                    }
+                }
+                Console.WriteLine("Books saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+        }
 
-            static void BorrowBook()
+        static void BorrowBook()
 
             {
 
@@ -470,6 +515,7 @@ namespace BasicLibrary
 
                     switch (choice)
                     {
+
                         case "A":
                             AddnNewBook();
                             break;
@@ -564,7 +610,51 @@ namespace BasicLibrary
 
             }
 
+        static void UserMenuu()
+        {
+            bool ExitFlag = false;
+            do
+            {
 
+                Console.WriteLine("Welcome Admin");
+                Console.WriteLine("\n Enter the char of operation you need :");
+                Console.WriteLine("\n A- Admain registeration");
+                Console.WriteLine("\n B- Admain login");
+                Console.WriteLine("\n C- Save and Exit");
+
+                string choice = Console.ReadLine().ToUpper(); ;
+
+                switch (choice)
+                {
+                    case "A":
+                        RegisterAdmin();
+                        break;
+                    case "B":
+                        RegisterUser();
+                        break;
+
+                    case "C":
+                        SaveAdminToFile();
+                        ExitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Sorry your choice was wrong");
+                        break;
+
+
+
+                }
+
+                Console.WriteLine("press any key to continue");
+                string cont = Console.ReadLine();
+
+                Console.Clear();
+
+            } while (ExitFlag != true);
+
+
+        }
 
 
         static void RegisterUser()
@@ -597,6 +687,8 @@ namespace BasicLibrary
             Console.WriteLine("Admin registered successfully!");
             Admin.Add((Username, Email, password));
         }
+
+
 
 
 
