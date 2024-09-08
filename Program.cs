@@ -6,7 +6,7 @@ namespace BasicLibrary
     internal class Program
     {
         static List<(string BName, string BAuthor, int ID, int quantity)> Books = new List<(string BName, string BAuthor, int ID, int quantity)>();
-        static List<(string Username, string Email, string UserID)> users = new List<(string Username, string Email, string UserID)>();
+        static List<(string Username, string Email, int UserID)> users = new List<(string Username, string Email, int UserID)>();
         static List<(string Username1, string Email, string password)> Admin = new List<(string Username1, string Email, string password)>();
 
         static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
@@ -17,11 +17,12 @@ namespace BasicLibrary
 
 
         static int id = 0;
-      
 
+        static int userIdCounter = 100;
         static void Main(string[] args)
         {
             bool ExitFlag = false;
+            LoadUserFromFile();
 
             LoadAdminFromFile();
             try
@@ -318,7 +319,7 @@ namespace BasicLibrary
                             var parts = line.Split('|');
                             if (parts.Length == 3)
                             {
-                                users.Add((parts[0], parts[1], (parts[2])));
+                                users.Add((parts[0], parts[1], int.Parse(parts[2])));
                             }
                         }
                     }
@@ -696,6 +697,47 @@ namespace BasicLibrary
             }
         }
 
+        static void UserFunction()
+        {
+            bool ExitFlag = false;
+            while (ExitFlag != true)
+            {
+
+                Console.WriteLine("Welcome User");
+                Console.WriteLine("\n Enter the char of operation you need :");
+                Console.WriteLine("\n A- User registeration");
+                Console.WriteLine("\n B- User login");
+                Console.WriteLine("\n C- Save and Exit");
+
+                string choice = Console.ReadLine().ToUpper(); ;
+
+                switch (choice)
+                {
+                    case "A":
+                        RegisterUser();
+                        break;
+                    case "B":
+                        LoginAdmin();
+                        break;
+
+                    case "C":
+                        SaveAdminToFile();
+                        ExitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Sorry your choice was wrong");
+                        break;
+
+
+
+                }
+
+
+
+            }
+        }
+
 
         static void RegisterUser()
         {
@@ -705,12 +747,16 @@ namespace BasicLibrary
             Console.Write("Enter Email: ");
             string Email = Console.ReadLine();
 
-            Console.Write("Enter User ID: ");
-            string UserID = Console.ReadLine();
+            int UserID = GenerateUserID();
+            Console.WriteLine(" User ID:" + UserID);
 
             Console.WriteLine("User registered successfully!");
 
             users.Add((Username, Email, UserID));
+        }
+        static int GenerateUserID()
+        {
+            return userIdCounter++;
         }
 
         static void RegisterAdmin()
@@ -769,6 +815,58 @@ namespace BasicLibrary
 
 
                 }
+
+
+
+
+
+
+
+
+
+
+        }
+
+        static void LoginUser()
+        {
+
+
+
+
+            Console.Write("Enter Username: ");
+            string Username = Console.ReadLine();
+
+            Console.Write("Enter Email: ");
+            string Email = Console.ReadLine();
+
+
+
+            bool flag = false;
+
+            for (int i = 0; i < Admin.Count; i++)
+            {
+                if (Username == users[i].Username && Email == users[i].Email && users[i].UserID == users[i].UserID)
+                {
+                    Console.Write("\n user authenticated successfully!");
+                    flag = true;
+
+                    break;
+                }
+
+            }
+            if (flag)
+            {
+                AdminMenu();
+
+
+            }
+            else
+            {
+
+                Console.WriteLine("Failed to authenticate. Invalid username, email, or password.");
+
+
+            }
 
 
 
