@@ -290,7 +290,7 @@ namespace BasicLibrary
         {
             try
             {
-                using (StreamWriter writer = new StreamWriter(filePathAdmin, true))
+                using (StreamWriter writer = new StreamWriter(filePathUser, true))
                 {
                     foreach (var user in users)
                     {
@@ -302,6 +302,32 @@ namespace BasicLibrary
             catch (Exception ex)
             {
                 Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+        }
+        static void LoadUserFromFile()
+        {
+            try
+            {
+                if (File.Exists(filePathUser))
+                {
+                    using (StreamReader reader = new StreamReader(filePathUser))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var parts = line.Split('|');
+                            if (parts.Length == 3)
+                            {
+                                users.Add((parts[0], parts[1], (parts[2])));
+                            }
+                        }
+                    }
+                    Console.WriteLine("user loaded from file successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
             }
         }
 
