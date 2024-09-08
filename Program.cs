@@ -286,6 +286,24 @@ namespace BasicLibrary
                 Console.WriteLine($"Error saving to file: {ex.Message}");
             }
         }
+        static void SaveUserToFile()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePathAdmin, true))
+                {
+                    foreach (var user in users)
+                    {
+                        writer.WriteLine($"{user.Username}|{user.Email}|{user.UserID}");
+                    }
+                }
+                Console.WriteLine("user saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+        }
 
         static void BorrowBook()
 
