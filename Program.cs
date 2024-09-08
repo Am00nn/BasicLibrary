@@ -40,8 +40,8 @@ namespace BasicLibrary
 
                 Console.WriteLine("Welcome to Lirary");
                 Console.WriteLine("\n choose A for admin or B for user or C for save & Exit:");
-                Console.WriteLine("\n A- Admin Menu");
-                Console.WriteLine("\n B- User Menu");
+                Console.WriteLine("\n A- Admin ");
+                Console.WriteLine("\n B- User ");
 
                 Console.WriteLine("\n C- Save and Exit");
 
@@ -53,7 +53,7 @@ namespace BasicLibrary
                     switch (choice)
                     {
                         case "A":
-                            UserMenuu();
+                            AdminFunction();
                             break;
 
                         case "B":
@@ -279,7 +279,7 @@ namespace BasicLibrary
                         writer.WriteLine($"{admins.Username1}|{admins.Email}|{admins.password}");
                     }
                 }
-                Console.WriteLine("Books saved to file successfully.");
+                Console.WriteLine("Admin saved to file successfully.");
             }
             catch (Exception ex)
             {
@@ -536,6 +536,7 @@ namespace BasicLibrary
                             break;
                         case "F":
                             SaveBooksToFile();
+                            SaveAdminToFile();
                             ExitFlag = true;
                             break;
 
@@ -610,10 +611,10 @@ namespace BasicLibrary
 
             }
 
-        static void UserMenuu()
+        static void AdminFunction()
         {
             bool ExitFlag = false;
-            do
+            while (ExitFlag != true)
             {
 
                 Console.WriteLine("Welcome Admin");
@@ -630,7 +631,7 @@ namespace BasicLibrary
                         RegisterAdmin();
                         break;
                     case "B":
-                        RegisterUser();
+                        LoginAdmin();
                         break;
 
                     case "C":
@@ -646,14 +647,9 @@ namespace BasicLibrary
 
                 }
 
-                Console.WriteLine("press any key to continue");
-                string cont = Console.ReadLine();
-
-                Console.Clear();
-
-            } while (ExitFlag != true);
 
 
+            }
         }
 
 
@@ -688,7 +684,58 @@ namespace BasicLibrary
             Admin.Add((Username, Email, password));
         }
 
+        static void LoginAdmin()
+        {
+            
+           
 
+
+                Console.Write("Enter Username: ");
+                string adminUsername = Console.ReadLine();
+
+                Console.Write("Enter Email: ");
+                string Email = Console.ReadLine();
+
+                Console.Write("Enter Password: ");
+                string password = Console.ReadLine();
+
+                bool flag = false;
+
+                for (int i = 0; i < Admin.Count; i++)
+                {
+                    if (adminUsername == Admin[i].Username1 && Email == Admin[i].Email && password == Admin[i].password)
+                    {
+                        Console.Write("\n Admin authenticated successfully!");
+                        flag = true;
+
+                        break;
+                    }
+
+                }
+                if (flag)
+                {
+                    AdminMenu();
+
+
+                }
+                else
+                {
+
+                    Console.WriteLine("Failed to authenticate. Invalid username, email, or password.");
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+        }
 
 
 
