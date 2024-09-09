@@ -8,7 +8,9 @@ namespace BasicLibrary
         static List<(string BName, string BAuthor, int ID, int quantity)> Books = new List<(string BName, string BAuthor, int ID, int quantity)>();
         static List<(string Username, string Email, int UserID)> users = new List<(string Username, string Email, int UserID)>();
         static List<(string Username1, string Email, string password)> Admin = new List<(string Username1, string Email, string password)>();
-        static List<(int ID, int BorrowCount)> BorrowCounts = new List<(int ID, int BorrowCount)>();
+        static List<(int UserID, int ID)> BorrowCounts = new List<(int UserID, int ID)>();
+
+
 
 
         static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
@@ -30,6 +32,7 @@ namespace BasicLibrary
             LoadUserFromFile();
             LoadBorrowCountsFromFile();
             LoadAdminFromFile();
+            LoadBorrowCountsFromFile();
             try
             {
                 LoadBooksFromFile();
@@ -68,6 +71,8 @@ namespace BasicLibrary
 
                         case "C":
                             SaveBooksToFile();
+                            // SaveAdminToFile();
+                            //  SaveUserToFile();
                             ExitFlag = true;
                             break;
 
@@ -90,6 +95,9 @@ namespace BasicLibrary
                 Console.Clear();
 
             } while (ExitFlag != true);
+
+
+
         }
         static void AddnNewBook()
 
@@ -124,7 +132,6 @@ namespace BasicLibrary
 
             }
         }
-
         static void ViewAllBooks()
         {
             try
@@ -202,7 +209,6 @@ namespace BasicLibrary
             }
 
         }
-
         static void LoadBooksFromFile()
         {
             try
@@ -255,7 +261,6 @@ namespace BasicLibrary
                 Console.WriteLine($"Error loading from file: {ex.Message}");
             }
         }
-
         static void SaveBooksToFile()
         {
             try
@@ -336,10 +341,11 @@ namespace BasicLibrary
                 Console.WriteLine($"Error loading from file: {ex.Message}");
             }
         }
-
         static void BorrowBook()
 
         {
+            LoadBooksFromFile();
+            LoadBorrowCountsFromFile();
 
 
             try
@@ -364,20 +370,24 @@ namespace BasicLibrary
 
                 }
 
-                Console.WriteLine("Enter the book name you want");
-                string name = Console.ReadLine();
+
+                Console.WriteLine("Enter Book ID");
+
+                int ID = int.Parse(Console.ReadLine());
                 bool flag = false;
 
                 for (int i = 0; i < Books.Count; i++)
                 {
-                    if (Books[i].BName == name && Books[i].quantity > 0)
+                    if (Books[i].ID == ID && Books[i].quantity > 0)
                     {
 
                         Console.WriteLine("Book is available ");
                         int newquantity = Books[i].quantity - 1;
                         Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
                         Console.WriteLine("The book has been borrowed ");
-
+                        int UserID = GenerateUserID();
+                        BorrowCounts.Add((UserID, ID));
+                        BorrowedBookFile();
                         flag = true;
                         break;
                     }
@@ -399,6 +409,9 @@ namespace BasicLibrary
             }
 
         }
+
+
+
         static void DeleteBook()
         {
 
@@ -587,12 +600,12 @@ namespace BasicLibrary
                         DeleteBook();
                         break;
                     case "M":
-                        AdminReport();
+                       // AdminReport();
 
                         break;
                     case "F":
                         SaveBooksToFile();
-                        SaveAdminToFile();
+
                         ExitFlag = true;
                         break;
 
@@ -749,7 +762,6 @@ namespace BasicLibrary
             }
         }
 
-
         static void RegisterUser()
         {
             Console.Write("Enter Username: ");
@@ -854,7 +866,7 @@ namespace BasicLibrary
 
             bool flag = false;
 
-            for (int i = 0; i < Admin.Count; i++)
+            for (int i = 0; i < users.Count; i++)
             {
                 if (Username == users[i].Username && Email == users[i].Email && users[i].UserID == users[i].UserID)
                 {
@@ -890,8 +902,7 @@ namespace BasicLibrary
 
         }
 
-
-        static void AdminReport()
+      /*  static void AdminReport()
         {
             if (Books.Count == 0)
             {
@@ -926,7 +937,15 @@ namespace BasicLibrary
 
             Console.WriteLine($"Most Borrowed Book: {mostBorrowedBook.BName}");
 
+            int TotalBooks = 0;
+            for (int i = 0; i < Books.Count; i++)
+            {
 
+                TotalBooks = Books[i].quantity + TotalBooks;
+                Console.WriteLine("total book :" + TotalBooks);
+
+
+            }
 
             using (StreamWriter writer = new StreamWriter(filePathBorrowCounts, true))
             {
@@ -936,10 +955,7 @@ namespace BasicLibrary
                 }
             }
             Console.WriteLine("Books saved to file successfully.");
-        }
-
-  
-
+        } */
 
 
         static void LoadBorrowCountsFromFile()
@@ -970,7 +986,31 @@ namespace BasicLibrary
             }
 
         }
-    
+
+
+        static void BorrowedBookFile()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePathBorrowCounts))
+                {
+                    foreach (var book in BorrowCounts)
+                    {
+
+                        writer.WriteLine($"{book.UserID}|{book.ID}");
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+
+        }
+
+
     }
 }
    
