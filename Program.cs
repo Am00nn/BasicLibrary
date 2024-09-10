@@ -292,7 +292,7 @@ namespace BasicLibrary
                 {
                     foreach (var book in Books)
                     {
-                        writer.WriteLine($"{book.BName}|{book.BAuthor}|{book.ID}|{book.quantity}");
+                        writer.WriteLine($"{book.BName}|{book.BAuthor}|{book.ID}|{book.Copies}|{book.BorrowedCopies}|{book.Price}|{book.Category}|{book.BorrowPeriod}");
                     }
                 }
                 Console.WriteLine("Books saved to file successfully.");
