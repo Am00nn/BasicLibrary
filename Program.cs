@@ -569,9 +569,10 @@ namespace BasicLibrary
                 if (Books[i].ID == ID)
                 {
 
-                    int newquantity = Books[i].quantity + 1;
+                    int newCopies = Books[i].Copies + 1;
+                    int newBorrowedCopies = Books[i].BorrowedCopies - 1;
 
-                    Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
+                    Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newCopies , newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
                     Console.WriteLine("The book has been returned ");
                    
                    
