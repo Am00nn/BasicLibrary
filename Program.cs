@@ -176,7 +176,7 @@ namespace BasicLibrary
                     sb.AppendLine();
                     sb.Append("Book ").Append(BookNumber).Append(" ID : ").Append(Books[i].ID);
                     sb.AppendLine();
-                    sb.Append("Book ").Append(BookNumber).Append(" Quantity : ").Append(Books[i].quantity);
+                    sb.Append("Book ").Append(BookNumber).Append(" Quantity : ").Append(Books[i].Copies);
                     sb.AppendLine().AppendLine();
                     Console.WriteLine(sb.ToString());
                     sb.Clear();
@@ -407,12 +407,18 @@ namespace BasicLibrary
 
                 for (int i = 0; i < Books.Count; i++)
                 {
-                    if (Books[i].ID == ID && Books[i].quantity > 0)
+                    if (Books[i].ID == ID && Books[i].Copies > 0)
                     {
 
                         Console.WriteLine("Book is available ");
-                        int newquantity = Books[i].quantity - 1;
-                        Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newquantity);
+
+
+                        int newCopies = Books[i].Copies - 1;
+                        int newBorrowedCopies = Books[i].BorrowedCopies + 1;
+
+
+                        Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newCopies, newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod
+);
                         Console.WriteLine("The book has been borrowed ");
                         SaveBooksToFile();
                         BorrowCounts.Add((UserId, ID));
