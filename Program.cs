@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml.Linq;
 
 namespace BasicLibrary
@@ -177,8 +179,8 @@ namespace BasicLibrary
                     sb.Append("Book ").Append(BookNumber).Append(" ID : ").Append(Books[i].ID);
                     sb.AppendLine();
                     sb.Append("Book ").Append(BookNumber).Append(" Copies : ").Append(Books[i].Copies);
-                    sb.AppendLine().AppendLine();
-                    Console.WriteLine(sb.ToString());
+                    sb.AppendLine();
+    
                     sb.Append("Book ").Append(BookNumber).Append(" Borrowed Copies : ").Append(Books[i].BorrowedCopies);
                     sb.AppendLine();
                     sb.Append("Book ").Append(BookNumber).Append(" Price : ").Append(Books[i].Price);
@@ -186,7 +188,9 @@ namespace BasicLibrary
                     sb.Append("Book ").Append(BookNumber).Append(" Category : ").Append(Books[i].Category);
                     sb.AppendLine();
                     sb.Append("Book ").Append(BookNumber).Append(" Borrow Period : ").Append(Books[i].BorrowPeriod);
-                    sb.AppendLine();
+
+                    sb.AppendLine().AppendLine();
+                    Console.WriteLine(sb.ToString());
                     sb.Clear();
 
                 }
@@ -223,7 +227,12 @@ namespace BasicLibrary
                 {
                     if (Books[i].BName == name)
                     {
+                        Console.WriteLine("Book Namae is : " + Books[i].BName);
                         Console.WriteLine("Book Author is : " + Books[i].BAuthor);
+                        Console.WriteLine("Book Copies is : " + Books[i].Copies);
+                        Console.WriteLine("Book Borrowed Copies is : " + Books[i].BorrowedCopies);
+                        Console.WriteLine("Book Price is : " + Books[i].Price);
+                        Console.WriteLine("Book Borrow Period is : " + Books[i].BorrowPeriod);
                         flag = true;
                         break;
                     }
