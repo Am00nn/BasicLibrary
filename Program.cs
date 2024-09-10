@@ -407,7 +407,7 @@ namespace BasicLibrary
 
                 for (int i = 0; i < Books.Count; i++)
                 {
-                    if (Books[i].ID == ID && Books[i].Copies > 0)
+                    if (Books[i].ID == ID && Books[i].Copies > Books[i].BorrowedCopies)
                     {
 
                         Console.WriteLine("Book is available ");
@@ -429,7 +429,7 @@ namespace BasicLibrary
                 }
 
                 if (flag != true)
-                { Console.WriteLine("book not found"); }
+                { Console.WriteLine("Book not found or no copies available "); }
 
 
 
