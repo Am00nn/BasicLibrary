@@ -176,9 +176,17 @@ namespace BasicLibrary
                     sb.AppendLine();
                     sb.Append("Book ").Append(BookNumber).Append(" ID : ").Append(Books[i].ID);
                     sb.AppendLine();
-                    sb.Append("Book ").Append(BookNumber).Append(" Quantity : ").Append(Books[i].Copies);
+                    sb.Append("Book ").Append(BookNumber).Append(" Copies : ").Append(Books[i].Copies);
                     sb.AppendLine().AppendLine();
                     Console.WriteLine(sb.ToString());
+                    sb.Append("Book ").Append(BookNumber).Append(" Borrowed Copies : ").Append(Books[i].BorrowedCopies);
+                    sb.AppendLine();
+                    sb.Append("Book ").Append(BookNumber).Append(" Price : ").Append(Books[i].Price);
+                    sb.AppendLine();
+                    sb.Append("Book ").Append(BookNumber).Append(" Category : ").Append(Books[i].Category);
+                    sb.AppendLine();
+                    sb.Append("Book ").Append(BookNumber).Append(" Borrow Period : ").Append(Books[i].BorrowPeriod);
+                    sb.AppendLine();
                     sb.Clear();
 
                 }
@@ -488,6 +496,7 @@ namespace BasicLibrary
         static void EditBook()
 
         {
+           
 
             Console.Clear();
             Books.Clear();
@@ -502,8 +511,11 @@ namespace BasicLibrary
                 Console.Write("Enter what you want to edit :");
                 Console.Write(" A- Book Name  ");
                 Console.Write(" B- Book Author  ");
-                Console.Write(" C- Book quantity ");
-                Console.Write(" D- Exit ");
+                Console.Write(" C- Book Copies ");
+                Console.Write(" D- Book Price ");
+                Console.Write(" F- Book Category ");
+                Console.Write(" M- Book Borrow Period ");
+                Console.Write(" S- Exit ");
                 Console.WriteLine();
                 char choice = Char.ToUpper(Console.ReadKey().KeyChar);
 
@@ -525,8 +537,17 @@ namespace BasicLibrary
                     case 'C':
                         EditingBookAttribute(choice);
                         break;
-
                     case 'D':
+                        EditingBookAttribute(choice);
+                        break;
+                    case 'F':
+                        EditingBookAttribute(choice);
+                        break;
+                    case 'M':
+                        EditingBookAttribute(choice);
+                        break;
+
+                    case 'S':
 
                         
                         ExitFlag = true;
@@ -966,7 +987,7 @@ namespace BasicLibrary
              for (int i = 0; i < Books.Count; i++)
              {
 
-                 TotalBookInLibrary += Books[i].quantity;
+                 TotalBookInLibrary += Books[i].Copies;
 
              }
 
@@ -1100,24 +1121,41 @@ namespace BasicLibrary
                         case 'A':
                             Console.WriteLine("Enter new book name :");
                             String Newname = Console.ReadLine();
-                            Books[i] = (Newname, Books[i].BAuthor, Books[i].ID, Books[i].quantity);
+                            Books[i] = (Newname, Books[i].BAuthor, Books[i].ID, Books[i].Copies, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
                             Console.WriteLine("Name Changed successfully ");
                             break;
 
                         case 'B':
                             Console.WriteLine("Enter new book Author :");
                             string NewAuthor = Console.ReadLine();
-                            Books[i] = (Books[i].BName, NewAuthor, Books[i].ID, Books[i].quantity);
+                            Books[i] = (Books[i].BName, NewAuthor, Books[i].ID,Books[i].Copies, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
                             Console.WriteLine("Author Changed successfully ");
                             break;
 
                         case 'C':
                             Console.WriteLine("Enter new book Quantity :");
                             int Newquantity = int.Parse(Console.ReadLine());
-                            Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, Newquantity);
+                            Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, Newquantity, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
                             Console.WriteLine("Quantity Changed successfully ");
                             break;
-
+                        case 'D':
+                            Console.WriteLine("Enter new book Price :");
+                            int NewPrice = int.Parse(Console.ReadLine());
+                            Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, Books[i].Copies, Books[i].BorrowedCopies, NewPrice, Books[i].Category, Books[i].BorrowPeriod);
+                            Console.WriteLine("Price Changed successfully ");
+                            break;
+                        case 'F':
+                            Console.WriteLine("Enter new book Category :");
+                            string NewCategory = (Console.ReadLine());
+                            Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, Books[i].Copies, Books[i].BorrowedCopies, Books[i].Price, NewCategory, Books[i].BorrowPeriod);
+                            Console.WriteLine("Category Changed successfully ");
+                            break;
+                        case 'M':
+                            Console.WriteLine("Enter new book Borrow Period :");
+                            int NewBorrowPeriod = int.Parse(Console.ReadLine());
+                            Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, Books[i].Copies, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, NewBorrowPeriod);
+                            Console.WriteLine("Borrow Period Changed successfully ");
+                            break;
 
 
 
