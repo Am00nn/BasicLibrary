@@ -129,13 +129,22 @@ namespace BasicLibrary
                 Console.WriteLine("Enter Book Author");
                 string author = Console.ReadLine();
 
-                Console.WriteLine("Enter Book Quantity");
-                int quantity = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter Book Copies ");
+                int Copies = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Enter Price:");
+                decimal price = decimal.Parse(Console.ReadLine());
+
+               Console.WriteLine("Enter Category:");
+               string category = Console.ReadLine();
+
+               Console.WriteLine("Enter Borrow Period (days):");
+               int borrowPeriod = int.Parse(Console.ReadLine());
 
 
-                Books.Add((name, author, bookID, quantity));
+               Books.Add((name, author, bookID, Copies, 0, price, category, borrowPeriod));
 
-                SaveBooksToFile();
+               SaveBooksToFile();
                Console.WriteLine("Book Added Succefully");
 
 
