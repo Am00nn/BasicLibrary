@@ -405,6 +405,16 @@ namespace BasicLibrary
                 int ID = int.Parse(Console.ReadLine());
                 bool flag = false;
 
+                foreach (var borrow in BorrowCounts)
+                {
+                    if (borrow.UserID == UserId && borrow.ID == ID)
+                    {
+                        Console.WriteLine("You have already borrowed this book.");
+                        return;
+                    }
+                }
+
+
                 for (int i = 0; i < Books.Count; i++)
                 {
                     if (Books[i].ID == ID && Books[i].Copies > Books[i].BorrowedCopies)
