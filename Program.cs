@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
@@ -10,10 +11,10 @@ namespace BasicLibrary
         static List<(string BName, string BAuthor, int ID, int Copies, int BorrowedCopies, decimal Price , string Category ,  int BorrowPeriod )> Books = new List<(string BName, string BAuthor, int ID, int Copies, int BorrowedCopies, decimal Price, string Category, int BorrowPeriod)>();
         static List<(string Username, string Email, int UserID)> users = new List<(string Username, string Email, int UserID)>();
         static List<(string Username1, string Email, string password)> Admin = new List<(string Username1, string Email, string password)>();
-        static List<(int UserID, int ID)> BorrowCounts = new List<(int UserID, int ID)>();
+        static List<(int UserID, int BookID ,DateTime BorrowDate , DateTime ReturnDate, DateTime ActualReturnDate,int Rating ,bool ISReturned)> BorrowCounts = new List<(int UserID, int BookID, DateTime BorrowDate, DateTime ReturnDate, DateTime ActualReturnDate, int Rating, bool ISReturned)>();
         static List<(int UsBorrowCountserID, int TotalBookInLibrary , int mostBorrowedBookID)> report = new List<(int UsBorrowCountserID, int TotalBookInLibrary, int mostBorrowedBookID)>();
+       
 
-   
 
 
         static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
@@ -219,20 +220,20 @@ namespace BasicLibrary
             try
             {
 
-                Console.WriteLine("Enter the book name you want");
-                string name = Console.ReadLine();
+                Console.WriteLine("Enter part of the book name you want to search for");
+                string searchTerm = Console.ReadLine();
                 bool flag = false;
 
-                for (int i = 0; i < Books.Count; i++)
+                foreach (var book in Books)
                 {
-                    if (Books[i].BName == name)
+                    if (book.BName.IndexOf( searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        Console.WriteLine("Book Namae is : " + Books[i].BName);
-                        Console.WriteLine("Book Author is : " + Books[i].BAuthor);
-                        Console.WriteLine("Book Copies is : " + Books[i].Copies);
-                        Console.WriteLine("Book Borrowed Copies is : " + Books[i].BorrowedCopies);
-                        Console.WriteLine("Book Price is : " + Books[i].Price);
-                        Console.WriteLine("Book Borrow Period is : " + Books[i].BorrowPeriod);
+                        Console.WriteLine("Book Namae is : " + book.BName);
+                        Console.WriteLine("Book Author is : " + book.BAuthor);
+                        Console.WriteLine("Book Copies is : " + book.Copies);
+                        Console.WriteLine("Book Borrowed Copies is : " + book.BorrowedCopies);
+                        Console.WriteLine("Book Price is : " + book.Price);
+                        Console.WriteLine("Book Borrow Period is : " + book.BorrowPeriod);
                         flag = true;
                         break;
                     }
@@ -424,7 +425,7 @@ namespace BasicLibrary
 
                 foreach (var borrow in BorrowCounts)
                 {
-                    if (borrow.UserID == UserId && borrow.ID == ID)
+                    if (borrow.UserID == UserId && borrow.BookID== ID)
                     {
                         Console.WriteLine("You have already borrowed this book.");
                         return;
@@ -442,13 +443,14 @@ namespace BasicLibrary
 
                         int newCopies = Books[i].Copies - 1;
                         int newBorrowedCopies = Books[i].BorrowedCopies + 1;
-
+                        DateTime BorrowDate = DateTime.Now;
+                        DateTime ReturnDate = DateTime.Now.AddDays(Books[i].BorrowPeriod);
 
                         Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newCopies, newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod
 );
                         Console.WriteLine("The book has been borrowed ");
                         SaveBooksToFile();
-                        BorrowCounts.Add((UserId, ID));
+                        BorrowCounts.Add((UserId , ID , BorrowDate , ReturnDate , BorrowCounts[i].ActualReturnDate , 0 , false));
                         BorrowedBookFile();
                         flag = true;
                         break;
@@ -607,7 +609,7 @@ namespace BasicLibrary
                    
                    
 
-                    BorrowCounts.Remove((UserId, ID));
+                    BorrowCounts.Remove((UserId, ID , ));
                     BorrowedBookFile();
                     SaveBooksToFile();
 
