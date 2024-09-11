@@ -1117,10 +1117,10 @@ namespace BasicLibrary
             {
                 using (StreamWriter writer = new StreamWriter(filePathBorrowCounts))
                 {
-                    foreach (var book in BorrowCounts)
+                    foreach (var borrow in BorrowCounts)
                     {
 
-                        writer.WriteLine($"{book.UserID}|{book.ID}");
+                        writer.WriteLine($"{borrow.UserID}|{borrow.BookID}|{borrow.BorrowDate}|{borrow.ReturnDate}|{borrow.ActualReturnDate}|{borrow.Rating}|{borrow.ISReturned}");
 
                     }
                 }
