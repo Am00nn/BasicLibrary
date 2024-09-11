@@ -609,7 +609,7 @@ namespace BasicLibrary
                    
                    
 
-                    BorrowCounts.Remove((UserId, ID , ));
+                    //BorrowCounts.Remove((UserId, ID));
                     BorrowedBookFile();
                     SaveBooksToFile();
 
@@ -1008,7 +1008,7 @@ namespace BasicLibrary
              {
                  for (int j = 0; j < mostBorrowedBook.Length; j++)
                  {
-                     if (BorrowCounts[i].ID == j)
+                     if (BorrowCounts[i].BookID == j)
                      {
                          mostBorrowedBook[j]++;
                      }
@@ -1074,9 +1074,9 @@ namespace BasicLibrary
                         while ((line = reader.ReadLine()) != null)
                         {
                             var parts = line.Split('|');
-                            if (parts.Length == 2)
+                            if (parts.Length == 7)
                             {
-                                BorrowCounts.Add((int.Parse(parts[0]), int.Parse(parts[1])));
+                                BorrowCounts.Add((int.Parse(parts[0]), int.Parse(parts[1]) , DateTime.Parse(parts[2]) , DateTime.Parse(parts[3]), DateTime.Parse(parts[4]) , int.Parse(parts[5]), bool.Parse(parts[6])));
 
                             }
                         }
