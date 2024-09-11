@@ -428,6 +428,29 @@ namespace BasicLibrary
                 Console.WriteLine($"Error saving to file: {ex.Message}");
             }
         }
+
+        static void SaveCategoriesToFile()
+      
+        {
+            try
+            {
+
+                using (StreamWriter writer = new StreamWriter(filePathUser))
+                {
+                    foreach (var Categories in CategoriesFile)
+                    {
+                        writer.WriteLine($"{Categories.CID}|{Categories.CName}|{Categories.NOFBooks}");
+                    }
+                }
+                Console.WriteLine("user saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+
+
+        }
         static void LoadUserFromFile()
         {
             try
