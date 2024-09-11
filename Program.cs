@@ -478,6 +478,33 @@ namespace BasicLibrary
                 Console.WriteLine($"Error loading from file: {ex.Message}");
             }
         }
+        static void LoadCategoriesFile()
+        {
+            try
+            {
+                if (File.Exists(filePathUser))
+                {
+                    using (StreamReader reader = new StreamReader(filePathUser))
+                    {
+                      
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var parts = line.Split('|');
+                            if (parts.Length == 3)
+                            {
+                                CategoriesFile.Add((int.Parse(parts[0]), parts[1], int.Parse(parts[2])));
+                            }
+                        }
+                    }
+                    Console.WriteLine("user loaded from file successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
+            }
+        }
         static void BorrowBook()
 
         {
