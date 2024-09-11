@@ -416,7 +416,7 @@ namespace BasicLibrary
                 {
                     foreach (var user in users)
                     {
-                        writer.WriteLine($"{user.Username}|{user.Email}|{user.UserID}");
+                        writer.WriteLine($"{user.Username}|{user.Email}|{user.UserID}|{user.Password}");
                     }
                 }
                 Console.WriteLine("user saved to file successfully.");
@@ -438,9 +438,9 @@ namespace BasicLibrary
                         while ((line = reader.ReadLine()) != null)
                         {
                             var parts = line.Split('|');
-                            if (parts.Length == 3)
+                            if (parts.Length == 4)
                             {
-                                users.Add((parts[0], parts[1], int.Parse(parts[2])));
+                                users.Add((parts[0], int.Parse(parts[1]), parts[4] , parts[5]));
                             }
                         }
                     }
@@ -999,7 +999,7 @@ namespace BasicLibrary
         {
 
 
-
+            LoadUserFromFile();
 
             Console.Write("Enter Username: ");
             string Username = Console.ReadLine();
