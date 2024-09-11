@@ -507,6 +507,17 @@ namespace BasicLibrary
                         BorrowCounts.Add((UserId, ID, BorrowDate, ReturnDate, DateTime.MinValue, 0, false));
                         BorrowedBookFile();
                         flag = true;
+
+                       /* for (int j = 0; j < CategoriesFile.Count; j++)
+                        {
+                            if (CategoriesFile[j].CName == Books[i].Category)
+                            {
+                                CategoriesFile[j] = (CategoriesFile[j].CID, CategoriesFile[j].CName, CategoriesFile[j].NOFBooks - 1);
+                                SaveCategoriesToFile();
+                                break;
+                            }
+                        } */
+
                         break;
                     }
                 }
