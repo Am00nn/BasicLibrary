@@ -450,7 +450,7 @@ namespace BasicLibrary
 );
                         Console.WriteLine("The book has been borrowed ");
                         SaveBooksToFile();
-                        BorrowCounts.Add((UserId , ID , BorrowDate , ReturnDate , BorrowCounts[i].ActualReturnDate , 0 , false));
+                        BorrowCounts.Add((UserId , ID , BorrowDate , ReturnDate , DateTime.MinValue , 0 , false));
                         BorrowedBookFile();
                         flag = true;
                         break;
@@ -589,7 +589,7 @@ namespace BasicLibrary
             BorrowCounts.Clear();
             LoadBorrowCountsFromFile();
             Console.Clear();
-         
+
 
             Console.WriteLine("Enter the book ID you want to return  :");
             int ID = int.Parse(Console.ReadLine());
@@ -604,27 +604,46 @@ namespace BasicLibrary
                     int newCopies = Books[i].Copies + 1;
                     int newBorrowedCopies = Books[i].BorrowedCopies - 1;
 
-                    Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newCopies , newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
+                    Books[i] = (Books[i].BName, Books[i].BAuthor, Books[i].ID, newCopies, newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
                     Console.WriteLine("The book has been returned ");
-                   
-                   
+                    for (int j = 0; j < BorrowCounts.Count; j++)
+                    {
+                        if (BorrowCounts[j].UserID == UserId && BorrowCounts[j].BookID == ID && !BorrowCounts[j].ISReturned)
+                        {
+                            Console.WriteLine(" Please rate the book 1-5");
+                            int rating = int.Parse(Console.ReadLine());
+                            DateTime ActualReturnDate = DateTime.Now;
+                            BorrowCounts[j] = (BorrowCounts[j].UserID, BorrowCounts[j].BookID, BorrowCounts[j].BorrowDate, BorrowCounts[j].ReturnDate, ActualReturnDate, rating, true);
 
-                    //BorrowCounts.Remove((UserId, ID));
-                    BorrowedBookFile();
+
+
+                            BorrowedBookFile();
+                            flage = true;
+                            break;
+                        }
+
+
+
+
+
+
+
+
+                    }
+
                     SaveBooksToFile();
-
-                    flage = true;
                     break;
 
                 }
 
 
-
+            }
+            if (!flage)
+            {
+                Console.WriteLine("Book not found or it has not been borrowed.");
             }
 
-
         }
-
         static void AdminMenu()
         {
             bool ExitFlag = false;
