@@ -30,29 +30,15 @@ namespace BasicLibrary
         static string filePathReport = "C:\\Users\\Lenovo\\source\\repos\\test\\report.txt";
 
 
-        //static string filePath = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\BooksFile.txt";
-        //static string filePathBorrow = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\borrow.txt";
-        //static string filePathAdmin = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\AdminsFile.txt";
-        //static string filePathCategories = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\CategoriesFile.txt";
-        //static string filePathUser = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\UsersFile.txt";
-        //static string filePathBorrowCounts = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\BorrowingFile.txt";
-        //static string filePathReport = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\report.txt";
-
-
-
-
 
         static int maxBorrowCount = 0;
-
-
-
 
 
         static void Main(string[] args)
         {
             bool ExitFlag = false;
 
-            // Try to load books and categories from files at startup
+            
             try
             {
                 LoadBooksFromFile();
@@ -126,8 +112,6 @@ namespace BasicLibrary
             Console.Clear();
             Console.WriteLine("Thank you for using the Library System. Goodbye!");
         }
-
-
 
         static void SaveBooksToFile()
         {
@@ -233,7 +217,7 @@ namespace BasicLibrary
             Console.Clear();
             Console.WriteLine("=========== Book Details ===========\n");
             Console.WriteLine("{0,-10} | {1,-30} | {2,-25} | {3,-10}", "Book ID", "Book Name", "Author", "copies");
-            Console.WriteLine(new string('=', 80)); // Divider line
+            Console.WriteLine(new string('=', 80)); 
 
             // Search for the book and display its details
             for (int i = 0; i < Books.Count; i++)
@@ -252,7 +236,7 @@ namespace BasicLibrary
                 return;
             }
 
-            Console.WriteLine(new string('=', 80)); // Divider line
+            Console.WriteLine(new string('=', 80)); 
             Console.WriteLine("\nChoose an option to edit for \"{0}\":", Books[index].BName);
             Console.WriteLine("1. Book Name\n2. Book Author\n3. Book Quantity\n");
 
@@ -285,7 +269,7 @@ namespace BasicLibrary
             Console.Write("Enter new Book name: ");
             string newTitle = Console.ReadLine();
 
-            // Check if the new title already exists
+            // Check if the new book name already exists
             foreach (var book in Books)
             {
                 if (book.BName.Equals(newTitle, StringComparison.OrdinalIgnoreCase))
@@ -629,22 +613,22 @@ namespace BasicLibrary
         {
             int newAID = 1;
 
-            // If there are admins in the list, find the maximum AID manually
+            // If there are admins in the list, find the maximum AID 
             if (Admin.Count > 0)
             {
-                // Assume the first admin has the highest AID
+              
                 newAID = Admin[0].AID;
 
-                // Loop through the Admin list to find the maximum AID
+            
                 for (int i = 1; i < Admin.Count; i++)
                 {
                     if (Admin[i].AID > newAID)
                     {
-                        newAID = Admin[i].AID; // Update newAID if a higher AID is found
+                        newAID = Admin[i].AID; 
                     }
                 }
 
-                newAID++; // Increment to get the next available AID
+                newAID++; 
             }
 
             Console.WriteLine("Enter admin name:");
@@ -1129,10 +1113,10 @@ namespace BasicLibrary
         {
             int newUID = 1;
 
-            // If there are users in the list, find the maximum UID 
+            
             if (Users.Count > 0)
             {
-                newUID = Users[0].UID; // Start by assuming the first user's UID is the highest
+                newUID = Users[0].UID; 
 
                 // Loop through the Users list to find the maximum UID
                 for (int i = 1; i < Users.Count; i++)
@@ -1399,24 +1383,24 @@ namespace BasicLibrary
         }
         static void BorrowBook(int userId)
         {
-            // Clear and reload the book and borrowing data
+          
             Books.Clear();
             LoadBooksFromFile();
 
             borrowBook.Clear();
             LoadBorrowCountsFromFile();
 
-            // Display borrowing interface
+           
             Console.Clear();
             Console.WriteLine("===================================");
             Console.WriteLine("          Borrow a Book            ");
             Console.WriteLine("===================================");
 
-            // Display available books
+            
             Console.WriteLine("\nAvailable Books for Borrowing:");
             Console.WriteLine("{0,-5} | {1,-30} | {2,-20} | {3,-10} | {4,-10} | {5,-10} | {6,-15} | {7,-5}",
                               "ID", "Title", "Author", "Copies", "Borrowed", "Price", "Category", "Period");
-            Console.WriteLine(new string('-', 110)); // Divider line
+            Console.WriteLine(new string('-', 110)); 
 
             foreach (var book in Books)
             {
@@ -1429,7 +1413,7 @@ namespace BasicLibrary
                 }
             }
 
-            // Prompt the user to enter the Book ID
+            
             Console.WriteLine("\nPlease enter the Book ID to borrow:");
             if (!int.TryParse(Console.ReadLine(), out int ID))
             {
@@ -1437,7 +1421,7 @@ namespace BasicLibrary
                 return;
             }
 
-            // Check if the book is available for borrowing
+            
             bool bookFound = false;
             for (int i = 0; i < Books.Count; i++)
             {
@@ -1445,10 +1429,10 @@ namespace BasicLibrary
                 {
                     bookFound = true;
 
-                    // Check if all copies of the book are borrowed
+                    
                     if (Books[i].copies > Books[i].BorrowedCopies)
                     {
-                        // Check if the user has already borrowed this book
+                       
                         bool isAlreadyBorrowed = false;
                         for (int j = 0; j < borrowBook.Count; j++)
                         {
@@ -1473,10 +1457,10 @@ namespace BasicLibrary
                             }
                         }
 
-                        // If the book is available and not already borrowed by the user
+                       
                         if (!isAlreadyBorrowed)
                         {
-                            // Display book details
+                            
                             Console.WriteLine("\nBook '{0}' is available for borrowing.", Books[i].BName);
                             Console.WriteLine("Author: {0}, Price: {1:C}, Borrow Period: {2} days",
                                               Books[i].BAuthor, Books[i].Price, Books[i].BorrowPeriod);
@@ -1524,7 +1508,7 @@ namespace BasicLibrary
         }
         static void ReturnBook(int userId)
         {
-            // Clear screen and display heading
+         
             Console.Clear();
             Console.WriteLine("===================================");
             Console.WriteLine("          Return a Book            ");
@@ -1533,7 +1517,7 @@ namespace BasicLibrary
 
             bool booksToReturn = false;
 
-            // Display books the user is currently borrowing and hasn't returned
+            
             for (int i = 0; i < borrowBook.Count; i++)
             {
                 if (borrowBook[i].UId == userId && !borrowBook[i].isReturn)
@@ -1563,7 +1547,7 @@ namespace BasicLibrary
                 return;
             }
 
-            // Prompt the user to enter the Book ID to return
+            
             Console.Write("\nEnter the Book ID you want to return: ");
             if (!int.TryParse(Console.ReadLine(), out int bookId))
             {
@@ -1592,7 +1576,7 @@ namespace BasicLibrary
                         }
                     }
 
-                    // Prompt the user for a rating (optional, but recommended)
+                    
                     Console.Write("\nPlease rate the book (1-5): ");
                     int rating;
                     while (!int.TryParse(Console.ReadLine(), out rating) || rating < 1 || rating > 5)
