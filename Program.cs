@@ -10,60 +10,75 @@ namespace BasicLibrary
 {
     internal class Program
     {
-        
+
 
         static List<(int ID, string BName, string BAuthor, int copies, int BorrowedCopies, double Price, string Category, int BorrowPeriod)> Books = new List<(int ID, string BName, string BAuthor, int copies, int BorrowedCopies, double Price, string Category, int BorrowPeriod)>();
         static List<(int UID, string UserName, string email, string password)> Users = new List<(int UID, string UserName, string email, string password)>();
         static List<(int AID, string Aname, string email, string password)> Admin = new List<(int AID, string Aname, string email, string password)>();
-
-        static List<(int UserID, int BookID, DateTime BorrowDate, DateTime ReturnDate, DateTime ActualReturnDate, int Rating, bool ISReturned)> BorrowCounts = new List<(int UserID, int BookID, DateTime BorrowDate, DateTime ReturnDate, DateTime ActualReturnDate, int Rating, bool ISReturned)>();
+        static List<(int UId, int BId, DateTime Bdate, DateTime Rdate, DateTime? ActualRD, int? Rating, bool isReturn)> borrowBook = new List<(int UId, int BId, DateTime Bdate, DateTime Rdate, DateTime? ActualRD, int? Rating, bool isReturn)>();
         static List<(int UsBorrowCountserID, int TotalBookInLibrary, int mostBorrowedBookID)> report = new List<(int UsBorrowCountserID, int TotalBookInLibrary, int mostBorrowedBookID)>();
         static List<(int CID, string CName, int NOFBooks)> Categories = new List<(int CID, string CName, int NOFBooks)>();
 
 
 
-        static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\lib.txt";
-        static string filePathBorrow = "C:\\Users\\Lenovo\\source\\repos\\test\\borrow.txt";
+        static string filePath = "C:\\Users\\Lenovo\\source\\repos\\test\\BooksFile.txt";
+       
         static string filePathAdmin = "C:\\Users\\Lenovo\\source\\repos\\test\\AdminsFile.txt";
         static string filePathCategories = "C:\\Users\\Lenovo\\source\\repos\\test\\CategoriesFile.txt";
-        static string filePathUser = "C:\\Users\\Lenovo\\source\\repos\\test\\user.txt";
-        static string filePathBorrowCounts = "C:\\Users\\Lenovo\\source\\repos\\test\\borrowCounts.txt";
+        static string filePathUser = "C:\\Users\\Lenovo\\source\\repos\\test\\UsersFile.txt";
+        static string filePathBorrowCounts = "C:\\Users\\Lenovo\\source\\repos\\test\\BorrowingFile.txt";
         static string filePathReport = "C:\\Users\\Lenovo\\source\\repos\\test\\report.txt";
+
+
+        //static string filePath = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\BooksFile.txt";
+        //static string filePathBorrow = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\borrow.txt";
+        //static string filePathAdmin = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\AdminsFile.txt";
+        //static string filePathCategories = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\CategoriesFile.txt";
+        //static string filePathUser = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\UsersFile.txt";
+        //static string filePathBorrowCounts = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\BorrowingFile.txt";
+        //static string filePathReport = "C:\\Users\\Hilal Al-Kalbani\\Desktop\\test\\report.txt";
+
+
+
 
 
         static int maxBorrowCount = 0;
 
 
-        static int UserId = 0;
+
 
 
         static void Main(string[] args)
         {
-
-
             bool ExitFlag = false;
 
+            // Try to load books and categories from files at startup
             try
             {
                 LoadBooksFromFile();
+                LoadCategoriesFile();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error loading books from file: " + ex.Message);
-
+                Console.WriteLine("Error loading data from file: " + ex.Message);
                 return;
             }
 
             do
             {
 
-                Console.WriteLine("Welcome to Lirary");
-                Console.WriteLine("\n choose A for admin or B for user or C for save & Exit:");
-                Console.WriteLine("\n A- Admin ");
-                Console.WriteLine("\n B- User ");
+                Console.Clear();
+                Console.WriteLine("========================================");
+                Console.WriteLine("      Welcome to the Library System     ");
+                Console.WriteLine("========================================\n");
 
-                Console.WriteLine("\n C- Save and Exit");
-
+                Console.WriteLine("Please choose an option from the menu below:");
+                Console.WriteLine("----------------------------------------");
+                Console.WriteLine(" A - Admin");
+                Console.WriteLine(" B - User");
+                Console.WriteLine(" C - Save and Exit");
+                Console.WriteLine("----------------------------------------");
+                Console.Write("\nYour choice: ");
 
                 string choice = Console.ReadLine().ToUpper();
 
@@ -72,26 +87,26 @@ namespace BasicLibrary
                     switch (choice)
                     {
                         case "A":
+                            Console.Clear();
+                            Console.WriteLine("Admin Menu");
                             AdminFunction();
                             break;
 
                         case "B":
+                            Console.Clear();
+                            Console.WriteLine("User Menu");
                             UserFunction();
                             break;
 
                         case "C":
-
+                            Console.WriteLine("\nSaving data and exiting the system...");
                             SaveBooksToFile();
-
                             ExitFlag = true;
                             break;
 
                         default:
-                            Console.WriteLine("Sorry your choice was wrong");
+                            Console.WriteLine("\nInvalid choice. Please select a valid option.");
                             break;
-
-
-
                     }
                 }
                 catch (Exception ex)
@@ -99,371 +114,20 @@ namespace BasicLibrary
                     Console.WriteLine("An error occurred while processing your choice: " + ex.Message);
                 }
 
-                Console.WriteLine("press any key to continue");
-                string cont = Console.ReadLine();
+                if (!ExitFlag)
+                {
+                    Console.WriteLine("\nPress any key to return to the menu...");
+                    Console.ReadKey();
+                }
 
-                Console.Clear();
-
-            } while (ExitFlag != true);
+            } while (!ExitFlag);
 
 
-
-        }
-        static void AddNewBook()
-        {
             Console.Clear();
-            Console.WriteLine("===================================");
-            Console.WriteLine("        Add New Book to Library     ");
-            Console.WriteLine("===================================");
-
-            int newId = 1;
-
-
-            if (Books.Count > 0)
-            {
-                newId = Books[0].ID;
-
-
-                for (int i = 1; i < Users.Count; i++)
-                {
-                    if (Books[i].ID > newId)
-                    {
-                        newId = Books[i].ID;
-                    }
-                }
-                newId++;
-            }
-
-            // Check for duplicate Book ID
-            for (int i = 0; i < Books.Count; i++)
-            {
-                if (Books[i].ID == newId)
-                {
-                    Console.WriteLine("Error: A book with this ID already exists.");
-                    Console.WriteLine("===================================");
-                    return;
-                }
-            }
-
-
-            Console.Write("Enter Book Name: ");
-            string name = Console.ReadLine();
-
-            // Check for duplicate Book Name
-            for (int i = 0; i < Books.Count; i++)
-            {
-                if (Books[i].BName.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    Console.WriteLine("Error: A book with this name already exists.");
-                    Console.WriteLine("===================================");
-                    return;
-                }
-            }
-
-
-            Console.Write("Enter Book Author: ");
-            string author = Console.ReadLine();
-
-            // Input Number of Copies
-            Console.Write("Enter Number of Copies: ");
-            int copies = int.Parse(Console.ReadLine());
-
-            // Input Book Price
-            Console.Write("Enter Book Price: ");
-            double price = double.Parse(Console.ReadLine());
-
-            LoadCategoriesFile();
-            Console.WriteLine("\nAvailable Categories:");
-            for (int i = 0; i < Categories.Count; i++)
-            {
-                Console.WriteLine($"{Categories[i].CID}: {Categories[i].CName}");
-            }
-
-            // Select Category
-            Console.Write("\nSelect Category ID: ");
-            int categoryId = int.Parse(Console.ReadLine());
-
-            string categoryName = null;
-            bool categoryFound = false;
-
-            // Find the category and update the NOFBooks count
-            for (int i = 0; i < Categories.Count; i++)
-            {
-                if (Categories[i].CID == categoryId)
-                {
-                    categoryName = Categories[i].CName;
-                    categoryFound = true;
-
-
-                    Categories[i] = (Categories[i].CID, Categories[i].CName, Categories[i].NOFBooks + 1);
-                   
-                    break;
-                }
-            }
-
-            if (!categoryFound)
-            {
-                Console.WriteLine("Error: Category not found.");
-                Console.WriteLine("===================================");
-                return;
-            }
-
-
-            Console.Write("Enter Borrow Period (days): ");
-            int borrowPeriod = int.Parse(Console.ReadLine());
-
-            //static List<(string BName, string BAuthor, int ID, int Copies, int BorrowedCopies, double Price, string Category, int BorrowPeriod)>
-            Books.Add((id, name, author, copies, 0, price, categoryName, borrowPeriod));
-
-
-            Console.WriteLine("\n===================================");
-            Console.WriteLine($"Success! Book '{name}' has been added to the library.");
-            Console.WriteLine("===================================");
-
-            SaveBooksToFile();
-            SaveCategoriesToFile();
-            Console.WriteLine("\nPress any key to return to the menu...");
-            Console.ReadKey();
-        }
-        static void ViewAllBooks()
-        {
-            try
-            {
-
-                if (Books == null || Books.Count == 0)
-                {
-                    Console.WriteLine("No books available to display.");
-                    return;
-                }
-
-
-                StringBuilder sb = new StringBuilder();
-
-
-                for (int i = 0; i < Books.Count; i++)
-                {
-                    int bookNumber = i + 1;
-
-
-                    sb.AppendLine($"====================================");
-                    sb.AppendLine($"       Book {bookNumber} Information");
-                    sb.AppendLine($"====================================");
-                    sb.AppendLine($"Book Name: {Books[i].BName}");
-                    sb.AppendLine($"Author: {Books[i].BAuthor}");
-                    sb.AppendLine($"Book ID: {Books[i].ID}");
-                    sb.AppendLine($"Copies: {Books[i].copies}");
-                    sb.AppendLine($"Borrowed Copies: {Books[i].BorrowedCopies}");
-                    sb.AppendLine($"Price: ${Books[i].Price}");
-                    sb.AppendLine($"Category: {Books[i].Category}");
-                    sb.AppendLine($"Borrow Period: {Books[i].BorrowPeriod} days");
-                    sb.AppendLine();
-                }
-
-
-                Console.WriteLine(sb.ToString());
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred while displaying the books: {ex.Message}");
-            }
+            Console.WriteLine("Thank you for using the Library System. Goodbye!");
         }
 
-        static void SearchForBook()
-        {
-            Console.Clear();
-            ViewAllBooks();
-            if (Books == null || Books.Count == 0)
-            {
-                Console.WriteLine("No books available to display.");
-                return;
-            }
-            try
-            {
 
-                Console.WriteLine("Enter part of the book name you want to search for");
-                string searchTerm = Console.ReadLine();
-                bool flag = false;
-
-                foreach (var book in Books)
-                {
-                    if (book.BName.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        Console.WriteLine("\n====================================");
-                        Console.WriteLine($"Book Name: {book.BName}");
-                        Console.WriteLine($"Author: {book.BAuthor}");
-                        Console.WriteLine($"Copies: {book.copies}");
-                        Console.WriteLine($"Borrowed Copies: {book.BorrowedCopies}");
-                        Console.WriteLine($"Price: ${book.Price:F2}");
-                        Console.WriteLine($"Category: {book.Category}");
-                        Console.WriteLine($"Borrow Period: {book.BorrowPeriod} days");
-                        Console.WriteLine("====================================");
-                        flag = true;
-                        break;
-                    }
-                }
-
-                if (flag != true)
-                { Console.WriteLine("book not found"); }
-
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine("An error occurred while searching for the book: " + ex.Message);
-            }
-
-        }
-
-        static void SearchForBookForUser()
-        {
-            Console.Clear();
-            ViewAllBooks();
-            if (Books == null || Books.Count == 0)
-            {
-                Console.WriteLine("No books available to display.");
-                return;
-            }
-            try
-            {
-
-                Console.WriteLine("Enter part of the book name you want to search for");
-                string searchTerm = Console.ReadLine();
-                bool flag = false;
-
-                foreach (var book in Books)
-                {
-                    if (book.BName.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
-                        Console.WriteLine("\n====================================");
-                        Console.WriteLine($"Book Name: {book.BName}");
-                        Console.WriteLine($"Author: {book.BAuthor}");
-                        Console.WriteLine($"Copies: {book.copies}");
-                        Console.WriteLine($"Borrowed Copies: {book.BorrowedCopies}");
-                        Console.WriteLine($"Price: ${book.Price:F2}");
-                        Console.WriteLine($"Category: {book.Category}");
-                        Console.WriteLine($"Borrow Period: {book.BorrowPeriod} days");
-                        Console.WriteLine("====================================");
-                        flag = true;
-
-                        Console.WriteLine("Would you like to borrow this book? (yes/no)");
-                        string response = Console.ReadLine().ToLower();
-
-                        if (response == "yes")
-                        {
-                            BorrowBook();
-                        }
-                        break;
-                    }
-                }
-
-                if (flag != true)
-                { Console.WriteLine("book not found"); }
-
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine("An error occurred while searching for the book: " + ex.Message);
-            }
-
-        }
-        static void LoadBooksFromFile()
-        {
-            try
-            {
-                if (File.Exists(filePath))
-                {
-                    using (StreamReader reader = new StreamReader(filePath))
-                    {
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            var parts = line.Split('|');
-                            if (parts.Length == 8)
-                            {
-                                Books.Add((int.Parse(parts[0]), parts[1], parts[2], int.Parse(parts[3]),int.Parse(parts[4]), double.Parse(parts[5]), parts[6], int.Parse(parts[7])));
-
-                                
-                            }
-                        }
-                    }
-                    Console.WriteLine("Books loaded from file successfully.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading from file: {ex.Message}");
-            }
-        }
-        //static void LoadAdminFromFile()
-        //{
-        //    try
-        //    {
-        //        if (File.Exists(filePathAdmin))
-        //        {
-        //            using (StreamReader reader = new StreamReader(filePathAdmin))
-        //            {
-        //                string line;
-        //                while ((line = reader.ReadLine()) != null)
-        //                {
-        //                    var parts = line.Split('|');
-        //                    if (parts.Length == 4)
-        //                    {
-        //                        Admin.Add((int.Parse(parts[0]),parts[1], parts[2], parts[3]));
-        //                    }
-        //                }
-        //            }
-        //            Console.WriteLine("Admins loaded from file successfully.");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error loading from file: {ex.Message}");
-        //    }
-        //}
-
-
-        static void LoadAdminFromFile()
-        {
-            try
-            {
-                if (File.Exists(filePathAdmin))
-                {
-                    using (StreamReader reader = new StreamReader(filePathAdmin))
-                    {
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            var parts = line.Split('|');
-
-                            // Ensure there are exactly 4 parts and the first part is an integer (AID)
-                            if (parts.Length == 4 && int.TryParse(parts[0], out int adminId))
-                            {
-                                string adminName = parts[1];
-                                string email = parts[2];
-                                string password = parts[3];
-
-                                // Add the tuple to the Admin list
-                                Admin.Add((adminId, adminName, email, password));
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Invalid format in line: {line}. Skipping.");
-                            }
-                        }
-                    }
-                    Console.WriteLine("Admins loaded from file successfully.");
-                }
-                else
-                {
-                    Console.WriteLine($"File not found: {filePathAdmin}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading from file: {ex.Message}");
-            }
-        }
 
         static void SaveBooksToFile()
         {
@@ -502,46 +166,8 @@ namespace BasicLibrary
                 Console.WriteLine($"Error saving to file: {ex.Message}");
             }
         }
-        static void SaveAdminToFile()
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(filePathAdmin))
-                {
-                    foreach (var admins in Admin)
-                    {
-                        writer.WriteLine($"{admins.AID}|{admins.Aname}|{admins.email}|{admins.password}");
-                    }
-                }
-                Console.WriteLine("Admin saved to file successfully.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving to file: {ex.Message}");
-            }
-        }
-        static void SaveUserToFile()
-        {
-            try
-            {
-
-                using (StreamWriter writer = new StreamWriter(filePathUser))
-                {
-                    foreach (var user in Users)
-                    {
-                        writer.WriteLine($"{user.UID}|{user.UserName}|{user.email}|{user.password}");
-                    }
-                }
-                Console.WriteLine("user saved to file successfully.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving to file: {ex.Message}");
-            }
-        }
-
         static void SaveCategoriesToFile()
-      
+
         {
             try
             {
@@ -562,33 +188,7 @@ namespace BasicLibrary
 
 
         }
-        static void LoadUserFromFile()
-        {
-            try
-            {
-                if (File.Exists(filePathUser))
-                {
-                    using (StreamReader reader = new StreamReader(filePathUser))
-                    {
-                        //   users.Add((Username, UserId, Email, Password));
-                        string line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            var parts = line.Split('|');
-                            if (parts.Length == 4)
-                            {
-                                Users.Add((int.Parse(parts[0]), parts[1], parts[2], parts[3]));
-                            }
-                        }
-                    }
-                    Console.WriteLine("user loaded from file successfully.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading from file: {ex.Message}");
-            }
-        }
+
         static void LoadCategoriesFile()
         {
             try
@@ -597,14 +197,14 @@ namespace BasicLibrary
                 {
                     using (StreamReader reader = new StreamReader(filePathCategories))
                     {
-                      
+
                         string line;
                         while ((line = reader.ReadLine()) != null)
                         {
                             var parts = line.Split('|');
                             if (parts.Length == 3)
                             {
-                                Categories.Add((int.Parse(parts[0]), parts[1], int.Parse(parts[2])));
+                                Categories.Add((int.Parse(parts[0].Trim()), parts[1].Trim(), int.Parse(parts[2].Trim())));
                             }
                         }
                     }
@@ -616,622 +216,159 @@ namespace BasicLibrary
                 Console.WriteLine($"Error loading from file: {ex.Message}");
             }
         }
-        static void BorrowBook()
-
-        {
-            Books.Clear();
-            LoadBooksFromFile();
-            BorrowCounts.Clear();
-            LoadBorrowCountsFromFile();
-            Console.Clear();
-            ViewAllBooks();
-
-
-            try
-            {
-
-
-                
-
-                Console.WriteLine("Enter Book ID :");
-
-                int ID = int.Parse(Console.ReadLine());
-                bool flag = false;
-
-                /* foreach (var borrow in BorrowCounts)
-                 {
-                     if (borrow.UserID == UserId && borrow.BookID== ID)
-                     {
-                         Console.WriteLine("You have already borrowed this book.");
-                         return;
-                     }
-                 }*/
-
-                
-                for (int i = 0; i < Books.Count; i++)
-                {
-                    if (Books[i].ID == ID && Books[i].copies > Books[i].BorrowedCopies)
-                    {
-
-                        Console.WriteLine("Book is available ");
-
-
-                        int newCopies = Books[i].copies - 1;
-                        int newBorrowedCopies = Books[i].BorrowedCopies + 1;
-                        DateTime BorrowDate = DateTime.Now;
-                        DateTime ReturnDate = DateTime.Now.AddDays(Books[i].BorrowPeriod);
-
-                       
-                        Books[i] = (Books[i].ID, Books[i].BName, Books[i].BAuthor, newCopies, newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
-                        Console.WriteLine("The book has been borrowed ");
-                        SaveBooksToFile();
-                        BorrowCounts.Add((UserId, ID, BorrowDate, ReturnDate, DateTime.MinValue, 0, false));
-                        BorrowedBookFile();
-                        flag = true;
-
-                               /* for (int j = 0; j < CategoriesFile.Count; j++)
-                                {
-                                    if (CategoriesFile[j].CName == Books[i].Category)
-                                    {
-                                        CategoriesFile[j] = (CategoriesFile[j].CID, CategoriesFile[j].CName, CategoriesFile[j].NOFBooks - 1);
-                                        SaveCategoriesToFile();
-                                        break;
-                                    }
-                                } */
-
-                        break;
-                    }
-                }
-
-                if (flag != true)
-                { Console.WriteLine("Book not found or no copies available "); }
-
-
-
-
-
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("An error occurred: " + ex.Message);
-
-            }
-
-        }
-
-
-
-        static void DeleteBook()
-        {
-            Console.Clear();
-            Books.Clear();
-            LoadBooksFromFile();
-            ViewAllBooks();
-
-            Console.WriteLine("Enter the book name you want delete :");
-            string name = Console.ReadLine();
-            bool flag = false;
-
-            for (int i = 0; i < Books.Count; i++)
-            {
-                if (Books[i].BName == name)
-                {
-                    Books.RemoveAt(i);
-                    flag = true;
-                    Console.WriteLine("The book :  " + name + "   has been deleted successfully.");
-                    break;
-                }
-            }
-            if (flag != true)
-            {
-                Console.WriteLine("Book not availabe");
-            }
-
-        }
 
         static void EditBook()
-
         {
-
-
             Console.Clear();
+            Console.WriteLine("============ Editing Book ============\n");
             Books.Clear();
 
             LoadBooksFromFile();
             ViewAllBooks();
 
-            bool ExitFlag = false;
-            do
-            {
-
-                Console.Write("Enter what you want to edit :");
-                Console.Write(" A- Book Name  ");
-                Console.Write(" B- Book Author  ");
-                Console.Write(" C- Book Copies ");
-                Console.Write(" D- Book Price ");
-                Console.Write(" F- Book Category ");
-                Console.Write(" M- Book Borrow Period ");
-                Console.Write(" S- Exit ");
-                Console.WriteLine();
-                char choice = Char.ToUpper(Console.ReadKey().KeyChar);
-
-
-                switch (choice)
-                {
-                    case 'A':
-
-                        EditingBookAttribute(choice);
-
-                        break;
-
-                    case 'B':
-                        EditingBookAttribute(choice);
-
-
-                        break;
-
-                    case 'C':
-                        EditingBookAttribute(choice);
-                        break;
-                    case 'D':
-                        EditingBookAttribute(choice);
-                        break;
-                    case 'F':
-                        EditingBookAttribute(choice);
-                        break;
-                    case 'M':
-                        EditingBookAttribute(choice);
-                        break;
-
-                    case 'S':
-
-
-                        ExitFlag = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Sorry your choice was wrong");
-                        break;
-
-
-
-                }
-
-                Console.WriteLine("press any key to continue");
-                string cont = Console.ReadLine();
-
-                Console.Clear();
-
-            } while (ExitFlag != true);
-
-
-        }
-
-        static void ReturnBooks()
-        {
-            Books.Clear();
-            LoadBooksFromFile();
-            BorrowCounts.Clear();
-            LoadBorrowCountsFromFile();
-            Console.Clear();
-
-
-            Console.WriteLine("Enter the book ID you want to return  :");
+            int index = -1;
+            Console.Write("Enter Book ID: ");
             int ID = int.Parse(Console.ReadLine());
 
-            bool flage = false;
+            Console.Clear();
+            Console.WriteLine("=========== Book Details ===========\n");
+            Console.WriteLine("{0,-10} | {1,-30} | {2,-25} | {3,-10}", "Book ID", "Book Name", "Author", "copies");
+            Console.WriteLine(new string('=', 80)); // Divider line
+
+            // Search for the book and display its details
             for (int i = 0; i < Books.Count; i++)
             {
-
                 if (Books[i].ID == ID)
                 {
+                    index = i;
+                    Console.WriteLine("{0,-10} | {1,-30} | {2,-25} | {3,-10}",
+                        Books[i].ID, Books[i].BName, Books[i].BAuthor, Books[i].copies);
+                }
+            }
 
-                    int newCopies = Books[i].copies + 1;
-                    int newBorrowedCopies = Books[i].BorrowedCopies - 1;
+            if (index == -1)
+            {
+                Console.WriteLine("\nInvalid ID. No book found.");
+                return;
+            }
 
-                    Books[i] = (Books[i].ID, Books[i].BName, Books[i].BAuthor, newCopies, newBorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
+            Console.WriteLine(new string('=', 80)); // Divider line
+            Console.WriteLine("\nChoose an option to edit for \"{0}\":", Books[index].BName);
+            Console.WriteLine("1. Book Name\n2. Book Author\n3. Book Quantity\n");
 
-                    Console.WriteLine("The book has been returned ");
-                    for (int j = 0; j < BorrowCounts.Count; j++)
-                    {
-                        if (BorrowCounts[j].UserID == UserId && BorrowCounts[j].BookID == ID && !BorrowCounts[j].ISReturned)
-                        {
-                            Console.WriteLine(" Please rate the book 1-5");
-                            int rating = int.Parse(Console.ReadLine());
-                            DateTime ActualReturnDate = DateTime.Now;
-                            BorrowCounts[j] = (BorrowCounts[j].UserID, BorrowCounts[j].BookID, BorrowCounts[j].BorrowDate, BorrowCounts[j].ReturnDate, ActualReturnDate, rating, true);
-
-
-
-                            BorrowedBookFile();
-                            flage = true;
-                            break;
-                        }
+            int choice = int.Parse(Console.ReadLine());
 
 
-
-
-
-
-
-
-                    }
-
-                    SaveBooksToFile();
+            switch (choice)
+            {
+                case 1:
+                    EditBookName(index);
                     break;
-
-                }
-
-
-            }
-            if (!flage)
-            {
-                Console.WriteLine("Book not found or it has not been borrowed.");
-            }
-
-        }
-        static void AdminMenu(int adminID)
-        {
-            bool ExitFlag = false;
-            do
-            {
-                Console.Clear();
-
-                Console.WriteLine("Welcome Admin");
-                Console.WriteLine("\n Enter the char of operation you need :");
-                Console.WriteLine("\n A- Add New Book");
-                Console.WriteLine("\n B- Display All Books");
-                Console.WriteLine("\n C- Search for Book by Name");
-                Console.WriteLine("\n D- Edit book");
-                Console.WriteLine("\n E- delet book");
-                Console.WriteLine("\n M- Admin Report");
-                Console.WriteLine("\n F- Save and Exit");
-
-                string choice = Console.ReadLine().ToUpper(); ;
-
-                switch (choice)
-                {
-
-                    case "A":
-                        AddNewBook();
-                        break;
-
-                    case "B":
-                        Console.Clear();
-                        ViewAllBooks();
-                        break;
-
-                    case "C":
-                        SearchForBook();
-                        break;
-                    case "D":
-                        EditBook();
-                        break;
-
-                    case "E":
-                        DeleteBook();
-                        break;
-                    case "M":
-                        GenerateReport();
-
-                        break;
-                    case "F":
-
-                        SaveBooksToFile();
-                        ExitFlag = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Sorry your choice was wrong");
-                        break;
-
-
-
-                }
-
-                Console.WriteLine("press any key to continue");
-                string cont = Console.ReadLine();
-
-
-
-            } while (ExitFlag != true);
-
-
-
-
-        }
-        static void UserMenu(int userID)
-        {
-            bool ExitFlag = false;
-            do
-            {
-                Console.Clear();
-
-                Console.WriteLine("Welcome ");
-                Console.WriteLine("\n Enter the char of operation you need :");
-                Console.WriteLine("\n A- Search for Book by Name");
-                Console.WriteLine("\n B- Borrow Books");
-                Console.WriteLine("\n C- Return Books");
-                Console.WriteLine("\n D- Display User Profile");
-                Console.WriteLine("\n E- Exit");
-
-                string choice = Console.ReadLine().ToUpper(); ;
-
-                switch (choice)
-                {
-                    case "A":
-                        SearchForBookForUser();
-                        break;
-
-                    case "B":
-                        BorrowBook();
-                        break;
-
-                    case "C":
-                        ReturnBooks();
-                        break;
-                    case "D":
-                       // ShowProfile();
-                        break;
-                    case "E":
-
-                        ExitFlag = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Sorry your choice was wrong");
-                        break;
-
-
-
-                }
-
-                Console.WriteLine("press any key to continue");
-                string cont = Console.ReadLine();
-
-
-
-            } while (ExitFlag != true);
-
-
-        }
-
-        static void AdminFunction()
-        {
-            bool ExitFlag = false;
-            while (ExitFlag != true)
-            {
-
-                Console.WriteLine("Welcome Admin");
-                Console.WriteLine("\n Enter the char of operation you need :");
-                Console.WriteLine("\n A- Admain registeration");
-                Console.WriteLine("\n B- Admain login");
-                Console.WriteLine("\n C- Exit");
-
-                string choice = Console.ReadLine().ToUpper(); ;
-
-                switch (choice)
-                {
-                    case "A":
-                        RegisterAdmin();
-                        break;
-                    case "B":
-                        LoadAdminFromFile();
-                        LoginAdmin();
-                        break;
-
-                    case "C":
-
-                        ExitFlag = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Sorry your choice was wrong");
-                        break;
-
-
-
-                }
-
-
-
+                case 2:
+                    EditBookAuthor(index);
+                    break;
+                case 3:
+                    EditBooknewcopies(index);
+                    break;
+                default:
+                    Console.WriteLine("Invalid input");
+                    break;
             }
         }
 
-        static void UserFunction()
+
+        static void EditBookName(int index)
         {
-            bool ExitFlag = false;
-            while (ExitFlag != true)
+            Console.Clear();
+            Console.WriteLine($"==============Edit '{Books[index].BName}' Name =========================\n");
+
+            Console.Write("Enter new Book name: ");
+            string newTitle = Console.ReadLine();
+
+            // Check if the new title already exists
+            foreach (var book in Books)
             {
-
-                Console.WriteLine("Welcome User");
-                Console.WriteLine("\n Enter the char of operation you need :");
-                Console.WriteLine("\n A- User registeration");
-                Console.WriteLine("\n B- User login");
-                Console.WriteLine("\n C-  Exit");
-
-                string choice = Console.ReadLine().ToUpper(); ;
-
-                switch (choice)
+                if (book.BName.Equals(newTitle, StringComparison.OrdinalIgnoreCase))
                 {
-                    case "A":
-                        RegisterUser();
-                        break;
-                    case "B":
-                        LoginUser();
-                        break;
-
-                    case "C":
-
-                        ExitFlag = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Sorry your choice was wrong");
-                        break;
-
-
-
+                    Console.WriteLine("The title of this book already exists in the library.");
+                    return;
                 }
+            }
 
+            Console.WriteLine($"\nThe new edited book details:\nBook ID: {Books[index].ID}\n Book Name: {newTitle}\nAuthor: {Books[index].BAuthor}\nCopies: {Books[index].copies}");
+            Console.Write("\n Are you sure you want to modify (yes / No) ?: ");
+            string confirm = Console.ReadLine().ToLower();
 
-
+            if (confirm == "yes")
+            {
+                // Update book details
+                Books[index] = (Books[index].ID, newTitle, Books[index].BAuthor, Books[index].copies, Books[index].BorrowedCopies, Books[index].Price, Books[index].Category, Books[index].BorrowPeriod);
+                SaveBooksToFile();
+                Console.WriteLine("\nThe new book name has been saved.");
+            }
+            else
+            {
+                Console.WriteLine("\nThe change was not saved.");
             }
         }
 
-        //static void RegisterUser()
-        //{
-        //    int UserId = users.Count + 1;
+
+        static void EditBookAuthor(int index)
+        {
+            Console.Clear();
+            Console.WriteLine($"========================Edit '{Books[index].BName}' Author=============================\n");
+
+            Console.Write("Enter New Author name: ");
+            string newAuthor = Console.ReadLine();
+
+            Console.WriteLine($"\nThe new edited book details:\nBook ID: {Books[index].ID}\nBook Name: {Books[index].BName}\nAuthor: {newAuthor}\nCopies: {Books[index].copies}");
+            Console.Write("\n Are you sure you want to modify (yes / No) ?: ");
+            string confirm = Console.ReadLine().ToLower();
+
+            if (confirm == "yes")
+            {
+                // Update book details
+                Books[index] = (Books[index].ID, Books[index].BName, newAuthor, Books[index].copies, Books[index].BorrowedCopies, Books[index].Price, Books[index].Category, Books[index].BorrowPeriod);
+                SaveBooksToFile();
+                Console.WriteLine("\nThe New Author has been saved.");
+            }
+            else
+            {
+                Console.WriteLine("\nThe change was not saved.");
+            }
+        }
 
 
+        static void EditBooknewcopies(int index)
+        {
+            Console.Clear();
+            Console.WriteLine($"===========================Edit '{Books[index].BName}' Quantity=============================\n");
 
+            Console.Write("\nEnter new quantity: ");
+            int newcopies = int.Parse(Console.ReadLine());
 
-        //    Console.Write("Enter Username: ");
-        //    string Username = Console.ReadLine();
+            if (newcopies < 0)
+            {
+                Console.WriteLine("Not allowed to add negative copies.");
+                return;
+            }
 
+            Console.WriteLine($"\nThe new edited book details:\nID: {Books[index].ID}\nTitle: {Books[index].BName}\nAuthor: {Books[index].BAuthor}\nCopies: {newcopies}");
+            Console.Write("\n Are you sure you want to modify (yes / No) ?: ");
+            string confirm = Console.ReadLine().ToLower();
 
-        //    Console.Write("Enter Email: ");
-        //    string Email = Console.ReadLine();
-
-
-        //    Console.Write("Enter Password: ");
-        //    string Password = Console.ReadLine();
-
-
-
-        //    users.Add((Username, UserId, Email, Password));
-        //    Console.WriteLine("User registered successfully!");
-        //    SaveUserToFile();
-        //}
-
-
-        //static void RegisterAdmin()
-        //{
-        //    string Password = "a123";
-
-        //    Console.Write("Enter Admin Password to Register: ");
-        //    string Password1 = Console.ReadLine();
-
-
-        //    if (Password1 == Password)
-        //    {
-        //        Console.Write("Enter Username: ");
-        //        string username = Console.ReadLine();
-
-        //        Console.Write("Enter Email: ");
-        //        string email = Console.ReadLine();
-
-        //        Console.WriteLine("Admin registered successfully!");
-        //        Admin.Add((username, email, Password1));
-        //        UserId = users.Count;
-        //        SaveAdminToFile();
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Incorrect password. Registration failed.");
-        //    }
-        //}
-
-        //static void LoginAdmin()
-        //{
-        //    LoadAdminFromFile();
-        //    string Password = "a123";
-
-        //    Console.Write("Enter Admin Password: ");
-        //    string Password1 = Console.ReadLine();
-
-
-        //    if (Password1 == Password)
-        //    {
-        //        Console.Write("Enter Username: ");
-        //        string adminUsername = Console.ReadLine();
-
-        //        Console.Write("Enter Email: ");
-        //        string email = Console.ReadLine();
-
-        //        bool flag = false;
-
-        //        for (int i = 0; i < Admin.Count; i++)
-        //        {
-        //            if (adminUsername == Admin[i].Username1 && email == Admin[i].Email)
-        //            {
-        //                Console.WriteLine("\nAdmin authenticated successfully!");
-        //                flag = true;
-        //                break;
-        //            }
-        //        }
-
-        //        if (flag)
-        //        {
-        //            AdminMenu();
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Failed to authenticate. Invalid username or email.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Incorrect password.");
-        //    }
-        //}
-
-        //static void LoginUser()
-        //{
-
-
-        //    LoadUserFromFile();
-
-        //    Console.Write("Enter Username: ");
-        //    string Username = Console.ReadLine();
-
-        //    Console.Write("Enter Email: ");
-        //    string Email = Console.ReadLine();
-
-        //    Console.Write("Enter Password: ");
-        //    string Password = Console.ReadLine();
-
-
-        //    bool flag = false;
-
-        //    for (int i = 0; i < users.Count; i++)
-        //    {
-        //        if (Username == users[i].Username && Email == users[i].Email && Password == users[i].Password)
-        //        {
-        //            Console.Write("\n user authenticated successfully!");
-        //            flag = true;
-
-        //            break;
-        //        }
-
-        //    }
-        //    if (flag)
-        //    {
-        //        UserMenu();
-
-
-        //    }
-        //    else
-        //    {
-
-        //        Console.WriteLine("Failed to authenticate. Invalid username, email, or password.");
-
-
-        //    }
-
-
-
-
-
-
-
-
-
-
-        //}
-
-
+            if (confirm == "yes")
+            {
+                // Update book details
+                Books[index] = (Books[index].ID, Books[index].BName, Books[index].BAuthor, newcopies, Books[index].BorrowedCopies, Books[index].Price, Books[index].Category, Books[index].BorrowPeriod);
+                SaveBooksToFile();
+                Console.WriteLine("The new Quantity has been saved.");
+            }
+            else
+            {
+                Console.WriteLine("The change was not saved.");
+            }
+        }
 
         static void ReportFromFile()
         {
@@ -1263,7 +400,6 @@ namespace BasicLibrary
 
         }
 
-
         static void LoadBorrowCountsFromFile()
         {
             try
@@ -1278,32 +414,62 @@ namespace BasicLibrary
                             var parts = line.Split('|');
                             if (parts.Length == 7)
                             {
-                                BorrowCounts.Add((int.Parse(parts[0]), int.Parse(parts[1]), DateTime.Parse(parts[2]), DateTime.Parse(parts[3]), DateTime.Parse(parts[4]), int.Parse(parts[5]), bool.Parse(parts[6])));
+                                // Parse UserID and BookID
+                                int userId = int.Parse(parts[0].Trim());
+                                int bId = int.Parse(parts[1].Trim());
 
+                                // Parse Borrow and Return Dates
+                                DateTime borrowDate = DateTime.Parse(parts[2].Trim());
+                                DateTime returnDate = DateTime.Parse(parts[3].Trim());
+
+                                // Parse nullable Due Date
+                                DateTime? dueDate = null;
+                                if (DateTime.TryParse(parts[4].Trim(), out DateTime parsedDueDate))
+                                {
+                                    dueDate = parsedDueDate;
+                                }
+
+                                // Parse nullable Fine
+                                int? fine = null;
+                                if (int.TryParse(parts[5].Trim(), out int parsedFine))
+                                {
+                                    fine = parsedFine;
+                                }
+
+                                // Parse the Returned Status
+                                bool isReturned = bool.Parse(parts[6].Trim());
+
+                                // Add the record to the borrowBook list
+                                borrowBook.Add((userId, bId, borrowDate, returnDate, dueDate, fine, isReturned));
                             }
                         }
                     }
-                    Console.WriteLine("Borrow counts  loaded from file successfully.");
+                    Console.WriteLine("Borrow counts loaded from file successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Borrow counts file does not exist.");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading from file: {ex.Message}");
             }
-
         }
-
-
         static void BorrowedBookFile()
         {
             try
             {
                 using (StreamWriter writer = new StreamWriter(filePathBorrowCounts))
                 {
-                    foreach (var borrow in BorrowCounts)
+                    foreach (var book in borrowBook)
                     {
 
-                        writer.WriteLine($"{borrow.UserID}|{borrow.BookID}|{borrow.BorrowDate}|{borrow.ReturnDate}|{borrow.ActualReturnDate}|{borrow.Rating}|{borrow.ISReturned}");
+                        string actualRD = book.ActualRD.HasValue ? book.ActualRD.Value.ToString("yyyy-MM-dd") : "N/A";
+                        string rating = book.Rating.HasValue ? book.Rating.Value.ToString() : "N/A";
+
+                        writer.WriteLine($"{book.UId}|{book.BId}|{book.Bdate.ToString("yyyy-MM-dd")}" +
+                            $"|{book.Rdate.ToString("yyyy-MM-dd")}|{actualRD}|{rating}|{book.isReturn}");
 
                     }
                 }
@@ -1316,319 +482,123 @@ namespace BasicLibrary
 
         }
 
-        static void EditingBookAttribute(char choice)
-
-        {
-            Console.WriteLine("Enter the book name you want");
-            string name = Console.ReadLine();
-            for (int i = 0; i < Books.Count; i++)
-            {
-                if (Books[i].BName == name)
-                {
-
-
-                    switch (choice)
-                    {
-
-
-                        case 'A':
-                            Console.WriteLine("Enter new book name :");
-                            String Newname = Console.ReadLine();
-                            Books[i] = (Books[i].ID, Newname, Books[i].BAuthor, Books[i].copies, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
-                            
-                            Console.WriteLine("Name Changed successfully ");
-                            break;
-
-                        case 'B':
-                            Console.WriteLine("Enter new book Author :");
-                            string NewAuthor = Console.ReadLine();
-                           
-                            Books[i] = (Books[i].ID, Books[i].BName, NewAuthor, Books[i].copies, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
-                            Console.WriteLine("Author Changed successfully ");
-                            break;
-
-                        case 'C':
-                            Console.WriteLine("Enter new book Quantity :");
-                            int Newquantity = int.Parse(Console.ReadLine());
-                            Books[i] = (Books[i].ID, Books[i].BName, Books[i].BAuthor, Newquantity, Books[i].BorrowedCopies, Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
-                           
-                            Console.WriteLine("Quantity Changed successfully ");
-                            break;
-
-                    }
-
-                    break;
-
-
-                }
-
-
-            }
-        }
-
-
-        //static void DisplayUserProfile()
-        //{
-        //    Console.WriteLine("Plase Enter User  ID :");
-
-        //    int userID = int.Parse(Console.ReadLine());
-        //    bool userFound = false;
-        //    bool hasBorrowedBooks = false;
-
-
-        //    for (int i = 0; i < users.Count; i++)
-        //    {
-        //        if (users[i].UserID == userID)
-        //        {
-        //            userFound = true;
-
-        //            Console.WriteLine("User found");
-        //            Console.WriteLine($"UserID: {users[i].UserID}");
-        //            Console.WriteLine($"Username: {users[i].Username}");
-        //            Console.WriteLine($"Email: {users[i].Email}");
-
-
-        //            for (int j = 0; j < BorrowCounts.Count; j++)
-        //            {
-        //                if (BorrowCounts[j].UserID == userID && !BorrowCounts[j].ISReturned)
-        //                {
-        //                    Console.WriteLine($"BookID: {BorrowCounts[j].BookID}, Borrow Date: {BorrowCounts[j].BorrowDate}, Return Date: {BorrowCounts[j].ReturnDate}");
-        //                    hasBorrowedBooks = true;
-        //                }
-        //            }
-
-        //            if (!hasBorrowedBooks)
-        //            {
-        //                Console.WriteLine("No books currently borrowed.");
-        //            }
-        //            break;
-        //        }
-        //    }
-
-        //    if (!userFound)
-        //    {
-        //        Console.WriteLine("User not found.");
-        //    }
-        
-        //}
-
-        static void GenerateReport()
+        static void GenerateReports()
         {
             LoadBooksFromFile();
             LoadCategoriesFile();
             LoadBorrowCountsFromFile();
 
-            // Number of books in the library
-            int totalBooks = Books.Count;
-
-            // Number of categories
-            int totalCategories = Categories.Count;
-
-            // Total number of copies of all books
-            int totalCopies = 0;
-            foreach (var book in Books)
-            {
-                totalCopies += book.copies;
-            }
-
-            // Total number of borrowed books
-            int totalBorrowedBooks = 0;
-
+            // Counting total books
+            int bookCount = 0;
             for (int i = 0; i < Books.Count; i++)
             {
-                totalBorrowedBooks += Books[i].BorrowedCopies;
+                bookCount++;
             }
 
-            // Displaying the report
-            Console.WriteLine("----- Library Report -----");
-            Console.WriteLine($"Total Number of Books: {totalBooks}");
-            Console.WriteLine($"Total Number of Categories: {totalCategories}");
-
-            // Display each category name with the number of books in each category
-            Console.WriteLine("Categories and their book counts:");
-            foreach (var category in Categories)
+            // Counting total categories
+            int categoryCount = 0;
+            for (int i = 0; i < Categories.Count; i++)
             {
-                Console.WriteLine($"Category: {category.CName}, Number of Books: {category.NOFBooks}");
+                categoryCount++;
             }
 
-            Console.WriteLine($"Total Number of Copies of All Books: {totalCopies}");
-            Console.WriteLine($"Total Number of Borrowed Books: {totalBorrowedBooks}");
-            Console.WriteLine("-----------------------------");
-        }
-
-        static void RegisterUser()
-        {
-            int newUID = 1;
-
-            // If there are users in the list, find the maximum UID manually
-            if (Users.Count > 0)
+            // Counting books in each category
+            List<(string Category, int Count)> categoryBookCounts = new List<(string Category, int Count)>();
+            for (int i = 0; i < Categories.Count; i++)
             {
-                newUID = Users[0].UID; // Start by assuming the first user's UID is the highest
-
-                // Loop through the Users list to find the maximum UID
-                for (int i = 1; i < Users.Count; i++)
+                int categoryBookCount = 0;
+                for (int j = 0; j < Books.Count; j++)
                 {
-                    if (Users[i].UID > newUID)
+                    if (Books[j].Category == Categories[i].CName)
                     {
-                        newUID = Users[i].UID; // Update if we find a higher UID
+                        categoryBookCount++;
                     }
                 }
-                newUID++; // Increment to get the next available UID
+                categoryBookCounts.Add((Categories[i].CName, categoryBookCount));
             }
 
-            Console.WriteLine("Enter your name:");
-            string userName = Console.ReadLine();
-
-            // Use a loop to check for duplicate usernames
-            for (int i = 0; i < Users.Count; i++)
+            // Calculating total number of copies
+            int totalCopies = 0;
+            for (int i = 0; i < Books.Count; i++)
             {
-                if (Users[i].UserName == userName)
+                totalCopies += Books[i].copies;
+            }
+
+            // Calculating total borrowed books
+            int totalBorrowed = 0;
+            for (int i = 0; i < borrowBook.Count; i++)
+            {
+                if (!borrowBook[i].isReturn)
                 {
-                    Console.WriteLine("Username already exists.");
-                    return;
+                    totalBorrowed++;
                 }
             }
 
-            string email = GetValidEmail();
-            string password = GetValidPassword();
+            // Calculating total returned books
+            int totalReturned = 0;
+            for (int i = 0; i < borrowBook.Count; i++)
+            {
+                if (borrowBook[i].isReturn)
+                {
+                    totalReturned++;
+                }
+            }
 
-            Users.Add((newUID, userName, email, password));
-            Console.WriteLine("User registered successfully!");
-        
-               UserFunction();
+            // Outputting the report
+            Console.WriteLine("Library Reports:");
+            Console.WriteLine($"Number of Books: {bookCount}");
+            Console.WriteLine($"Number of Categories: {categoryCount}");
+
+            foreach (var cat in categoryBookCounts)
+            {
+                Console.WriteLine($"Category: {cat.Category}, Number of Books: {cat.Count}");
+            }
+
+            Console.WriteLine($"Total Number of Copies: {totalCopies}");
+            Console.WriteLine($"Total Number of Borrowed Books: {totalBorrowed}");
+
+            Console.WriteLine($"Total Number of Returned Books: {totalReturned}");
         }
 
-        // Validate Password
-        static string GetValidPassword()
-        {
-            string password;
-            while (true)
-            {
-                Console.WriteLine("Enter your password at least 8 characters, include uppercase, lowercase, digit, and symbol:");
-                password = Console.ReadLine();
-                if (password.Length >= 8 &&
-                    Regex.IsMatch(password, @"[A-Z]") &&
-                    Regex.IsMatch(password, @"[a-z]") &&
-                    Regex.IsMatch(password, @"[0-9]"))
-                {
-                    break;
-                }
-                Console.WriteLine("Password does not meet criteria. Try again.");
-            }
-            return password;
-        }
 
-        static string GetValidEmail()
-        {
-            string email;
-            while (true)
-            {
-                Console.WriteLine("Enter your email (must contain '@' and end with .com or .edu):");
-                email = Console.ReadLine();
 
-                // Check if email is in the correct format
-                if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.(com|edu)$"))
-                {
-                    Console.WriteLine("Invalid email format. Try again.");
-                    continue; // Ask for input again
-                }
+        // *************** (admin function ) *************************
 
-                // Check for duplicate email in Users list
-                bool emailExists = false;
-                for (int i = 0; i < Users.Count; i++)
-                {
-                    if (Users[i].email == email)
-                    {
-                        emailExists = true;
-                        break; // Stop checking further if duplicate is found
-                    }
-                }
-
-                // Check for duplicate email in Admin list
-                for (int i = 0; i < Admin.Count; i++)
-                {
-                    if (Admin[i].email == email)
-                    {
-                        emailExists = true;
-                        break; // Stop checking further if duplicate is found
-                    }
-                }
-
-                // If email is not a duplicate, exit the loop
-                if (!emailExists)
-                {
-                    break;
-                }
-
-                Console.WriteLine("Duplicate email. Try again.");
-            }
-            return email;
-        }
-
-        // User login
-        static void LoginUser()
-        {
-
-            Console.WriteLine("Enter your email:");
-            string email = Console.ReadLine();
-
-            // Check if the email exists in the Users list
-            bool userFound = false;
-            int userIndex = -1;
-
-            for (int i = 0; i < Users.Count; i++)
-            {
-                if (Users[i].email == email)
-                {
-                    userFound = true;
-                    userIndex = i;
-                    break;
-                }
-            }
-
-            if (!userFound)
-            {
-                Console.WriteLine("User is not registered. Do you want to register? (yes / no )");
-                if (Console.ReadLine().ToLower() == "yes")
-                {
-                    RegisterUser();
-                }
-                else
-                {
-                    UserFunction();
-                }
-            }
-            else
-            {
-                var user = Users[userIndex];
-                if (Authenticate(user.password))
-                {
-                    UserMenu(user.UID);
-                }
-            }
-        }
         static void LoginAdmin()
         {
+
             Console.WriteLine("Enter your email:");
             string email = Console.ReadLine();
 
-            // Check if the email exists in the Admin list manually
+            // Check if the email exists 
             bool adminFound = false;
             int foundAdmin = -1;
 
             for (int i = 0; i < Admin.Count; i++)
             {
-                if (Admin[i].email == email)
+                if (Admin[i].email.Equals(email, StringComparison.OrdinalIgnoreCase))
                 {
                     adminFound = true;
                     foundAdmin = i;
-                    break;
+                    Console.WriteLine("\nEnter Admin's Password:");
+                    string password = Console.ReadLine();
+                    if (Admin[i].password == password)
+                    {
+                        AdminMenu(Admin[i].AID);
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Incorrect Admin's Password.");
+                        Console.WriteLine("\nPress Enter key to continue...");
+                        Console.ReadLine();
+                        return;
+                    }
                 }
             }
 
             if (!adminFound)
             {
-
                 Console.WriteLine("Admin is not registered. Do you want to register? (yes / no)");
                 if (Console.ReadLine().ToLower() == "yes")
                 {
@@ -1638,24 +608,8 @@ namespace BasicLibrary
                 {
                     AdminFunction();
                 }
-
             }
-            else
-            {
-                var admins = Admin[foundAdmin];
-                if (Authenticate(admins.password))
-                {
-                 
-
-                    AdminMenu(admins.AID);
-                }
-            }
-
-
         }
-
-
-        // Authenticate user || admin with password
         static bool Authenticate(string password)
         {
             Console.WriteLine("Enter your password:");
@@ -1669,18 +623,8 @@ namespace BasicLibrary
                 return false;
             }
 
-            if (inputPassword.ToString() == password)
-            {
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Wrong password.");
-                return false;
-            }
+            return inputPassword == password;
         }
-
-
         static void RegisterAdmin()
         {
             int newAID = 1;
@@ -1730,8 +674,1123 @@ namespace BasicLibrary
             // Add the new admin
             Admin.Add((newAID, adminName, email, password));
             Console.WriteLine("Admin registered successfully!");
+            SaveAdminToFile();
             AdminFunction();
+
         }
+        static string GetValidPassword()
+        {
+            string password;
+            while (true)
+            {
+                Console.WriteLine("Enter your password (at least 8 characters, include uppercase, lowercase, and a digit):");
+                password = Console.ReadLine();
+                if (password.Length >= 8 &&
+                    Regex.IsMatch(password, @"[A-Z]") &&
+                    Regex.IsMatch(password, @"[a-z]") &&
+                    Regex.IsMatch(password, @"[0-9]"))
+                {
+                    break;
+                }
+                Console.WriteLine("Password does not meet criteria. Try again.");
+            }
+            return password;
+        }
+        static string GetValidEmail()
+        {
+            string email;
+            while (true)
+            {
+                Console.WriteLine("Enter your email (must contain '@' and end with .com or .edu):");
+                email = Console.ReadLine();
+
+                if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.(com|edu)$"))
+                {
+                    Console.WriteLine("Invalid email format. Try again.");
+                    continue;
+                }
+
+                bool emailExists = Users.Any(u => u.email == email) || Admin.Any(a => a.email == email);
+
+                if (!emailExists)
+                {
+                    break;
+                }
+
+                Console.WriteLine("Duplicate email. Try again.");
+            }
+            return email;
+        }
+        static void AdminFunction()
+        {
+            bool ExitFlag = false;
+
+
+            while (!ExitFlag)
+            {
+                Console.Clear();
+                Console.WriteLine("=====================================");
+                Console.WriteLine("          Welcome, Admin!            ");
+                Console.WriteLine("=====================================\n");
+
+                Console.WriteLine("Please select an operation from the menu below:");
+                Console.WriteLine("-------------------------------------");
+                Console.WriteLine(" A - Admin Registration");
+                Console.WriteLine(" B - Admin Login");
+                Console.WriteLine(" C - Exit to Main Menu");
+                Console.WriteLine("-------------------------------------");
+                Console.Write("\nYour choice: ");
+
+                string choice = Console.ReadLine().ToUpper();
+
+                switch (choice)
+                {
+                    case "A":
+                        Console.Clear();
+                        Console.WriteLine("Admin Registration\n");
+                        RegisterAdmin();
+                        break;
+
+                    case "B":
+                        Console.Clear();
+                        Console.WriteLine("Admin Login\n");
+                        LoadAdminFromFile();
+                        LoginAdmin();
+                        break;
+
+                    case "C":
+                        ExitFlag = true;
+                        Console.WriteLine("\nExiting Admin Menu...");
+                        break;
+
+                    default:
+                        Console.WriteLine("\nInvalid option. Please choose a valid action.");
+                        break;
+                }
+
+
+                if (!ExitFlag)
+                {
+                    Console.WriteLine("\nPress any key to return to the Admin Menu...");
+                    Console.ReadKey();
+                }
+            }
+
+            Console.Clear();
+            Console.WriteLine("Returning to the main menu...");
+        }
+        static void AdminMenu(int adminID)
+        {
+            bool running = true;
+            while (running)
+            {
+                Console.Clear();
+                Console.WriteLine("===================================");
+                Console.WriteLine("          Library Admin Menu       ");
+                Console.WriteLine("===================================");
+                Console.WriteLine("1. Add New Book");
+                Console.WriteLine("2. View Books");
+                Console.WriteLine("3. Edit Books");
+                Console.WriteLine("4. Remove Books");
+                Console.WriteLine("5. Search Books");
+                Console.WriteLine("6. Generate Reports");
+                Console.WriteLine("7. Log Out");
+                Console.WriteLine("===================================");
+                Console.Write("Choose an option (1-7): ");
+                var option = Console.ReadLine();
+
+
+                Console.WriteLine("\n-----------------------------------\n");
+
+                switch (option)
+                {
+                    case "1":
+                        Console.WriteLine("Add New Book");
+                        Console.WriteLine("-----------------------------------");
+                        AddNewBook();
+                        break;
+                    case "2":
+                        Console.WriteLine("View Books");
+                        Console.WriteLine("-----------------------------------");
+                        ViewAllBooks();
+                        break;
+                    case "3":
+                        Console.WriteLine("Edit Books");
+                        Console.WriteLine("-----------------------------------");
+                        EditBook();
+                        break;
+                    case "4":
+                        Console.WriteLine("Remove Books");
+                        Console.WriteLine("-----------------------------------");
+                        DeleteBook();
+                        break;
+                    case "5":
+                        Console.WriteLine("Search Books");
+                        Console.WriteLine("-----------------------------------");
+                        SearchForBook();
+                        break;
+                    case "6":
+                        Console.WriteLine("Generate Reports");
+                        Console.WriteLine("-----------------------------------");
+                        GenerateReports();
+                        break;
+                    case "7":
+                        Console.WriteLine("Saving changes and logging out...");
+                        SaveBooksToFile();
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option. Please choose a valid option (1-7).");
+                        break;
+                }
+
+                if (running)
+                {
+
+                    Console.WriteLine("\nPress any key to return to the menu...");
+                    Console.ReadKey();
+                }
+            }
+        }
+        static void AddNewBook()
+        {
+
+            Console.Clear();
+            Console.WriteLine("===================================");
+            Console.WriteLine("        Add New Book to Library     ");
+            Console.WriteLine("===================================");
+
+            int newId = Books.Count + 1;
+
+
+
+
+            // Check for duplicate Book ID
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].ID == newId)
+                {
+                    Console.WriteLine("Error: A book with this ID already exists.");
+                    Console.WriteLine("===================================");
+                    return;
+                }
+            }
+
+
+            Console.Write("Enter Book Name: ");
+            string name = Console.ReadLine();
+
+            // Check for duplicate Book Name
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].BName.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("Error: A book with this name already exists.");
+                    Console.WriteLine("===================================");
+                    return;
+                }
+            }
+
+
+            Console.Write("Enter Book Author: ");
+            string author = Console.ReadLine();
+
+            // Input Number of Copies
+            Console.Write("Enter Number of Copies: ");
+            int copies = int.Parse(Console.ReadLine());
+
+            // Input Book Price
+            Console.Write("Enter Book Price: ");
+            double price = double.Parse(Console.ReadLine());
+
+
+            Console.WriteLine("\nAvailable Categories:");
+            for (int i = 0; i < Categories.Count; i++)
+            {
+                Console.WriteLine($"{Categories[i].CID}: {Categories[i].CName}");
+            }
+
+            // Select Category
+            Console.Write("\nSelect Category ID: ");
+            int categoryId = int.Parse(Console.ReadLine());
+
+            string categoryName = null;
+            bool categoryFound = false;
+
+            // Find the category and update the NOFBooks count
+            for (int i = 0; i < Categories.Count; i++)
+            {
+                if (Categories[i].CID == categoryId)
+                {
+                    categoryName = Categories[i].CName;
+                    categoryFound = true;
+
+
+                    Categories[i] = (Categories[i].CID, Categories[i].CName, Categories[i].NOFBooks + 1);
+                    SaveCategoriesToFile();
+                    break;
+                }
+            }
+
+            if (!categoryFound)
+            {
+                Console.WriteLine("Error: Category not found.");
+                Console.WriteLine("===================================");
+                return;
+            }
+
+
+            Console.Write("Enter Borrow Period (days): ");
+            int borrowPeriod = int.Parse(Console.ReadLine());
+
+
+            Books.Add((newId, name, author, copies, 0, price, categoryName, borrowPeriod));
+
+
+            Console.WriteLine("\n===================================");
+            Console.WriteLine($"Success! Book '{name}' has been added to the library.");
+            Console.WriteLine("===================================");
+
+            SaveBooksToFile();
+
+            Console.WriteLine("\nPress any key to return to the menu...");
+            Console.ReadKey();
+        }
+        static void ViewAllBooks()
+        {
+            try
+            {
+
+                if (Books == null || Books.Count == 0)
+                {
+                    Console.WriteLine("No books available to display.");
+                    return;
+                }
+
+
+                StringBuilder sb = new StringBuilder();
+
+
+                for (int i = 0; i < Books.Count; i++)
+                {
+                    int bookNumber = i + 1;
+
+
+                    sb.AppendLine($"====================================");
+                    sb.AppendLine($"       Book {bookNumber} Information");
+                    sb.AppendLine($"====================================");
+                    sb.AppendLine($"Book Name: {Books[i].BName}");
+                    sb.AppendLine($"Author: {Books[i].BAuthor}");
+                    sb.AppendLine($"Book ID: {Books[i].ID}");
+                    sb.AppendLine($"Copies: {Books[i].copies}");
+                    sb.AppendLine($"Borrowed Copies: {Books[i].BorrowedCopies}");
+                    sb.AppendLine($"Price: ${Books[i].Price}");
+                    sb.AppendLine($"Category: {Books[i].Category}");
+                    sb.AppendLine($"Borrow Period: {Books[i].BorrowPeriod} days");
+                    sb.AppendLine();
+                }
+
+
+                Console.WriteLine(sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while displaying the books: {ex.Message}");
+            }
+        }
+        static void SearchForBook()
+        {
+            Console.Clear();
+            ViewAllBooks();
+            if (Books == null || Books.Count == 0)
+            {
+                Console.WriteLine("No books available to display.");
+                return;
+            }
+            try
+            {
+
+                Console.WriteLine("Enter part of the book name you want to search for");
+                string searchTerm = Console.ReadLine();
+                bool flag = false;
+
+                foreach (var book in Books)
+                {
+                    if (book.BName.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        Console.WriteLine("\n====================================");
+                        Console.WriteLine($"Book Name: {book.BName}");
+                        Console.WriteLine($"Author: {book.BAuthor}");
+                        Console.WriteLine($"Copies: {book.copies}");
+                        Console.WriteLine($"Borrowed Copies: {book.BorrowedCopies}");
+                        Console.WriteLine($"Price: ${book.Price:F2}");
+                        Console.WriteLine($"Category: {book.Category}");
+                        Console.WriteLine($"Borrow Period: {book.BorrowPeriod} days");
+                        Console.WriteLine("====================================");
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (flag != true)
+                { Console.WriteLine("book not found"); }
+
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("An error occurred while searching for the book: " + ex.Message);
+            }
+
+        }
+        static void DeleteBook()
+        {
+            Console.Clear();
+            Books.Clear();
+            LoadBooksFromFile();
+            ViewAllBooks();
+
+            Console.WriteLine("Enter the book name you want to delete:");
+            string name = Console.ReadLine();
+            bool bookFound = false;
+
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].BName.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Check if the book has any borrowed copies
+                    if (Books[i].BorrowedCopies > 0)
+                    {
+                        Console.WriteLine($"The book '{name}' cannot be deleted because there are {Books[i].BorrowedCopies} copies currently borrowed.");
+                    }
+                    else
+                    {
+                        Books.RemoveAt(i);
+                        Console.WriteLine($"The book '{name}' has been deleted successfully.");
+                    }
+                    bookFound = true;
+                    break;
+                }
+            }
+
+            if (!bookFound)
+            {
+                Console.WriteLine("Book not available.");
+            }
+        }
+        static void LoadAdminFromFile()
+        {
+            try
+            {
+                if (File.Exists(filePathAdmin))
+                {
+                    using (StreamReader reader = new StreamReader(filePathAdmin))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var parts = line.Split('|');
+                            if (parts.Length == 4)
+                            {
+                                Admin.Add((int.Parse(parts[0].Trim()), parts[1].Trim(), parts[2].Trim(), parts[3].Trim()));
+                            }
+                        }
+                    }
+                    Console.WriteLine("Admins loaded from file successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
+            }
+        }
+        static void SaveAdminToFile()
+        {
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(filePathAdmin))
+                {
+                    foreach (var admins in Admin)
+                    {
+                        writer.WriteLine($"{admins.AID}|{admins.Aname}|{admins.email}|{admins.password}");
+                    }
+                }
+                Console.WriteLine("Admin saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+        }
+
+        //************** (user function)******************************  
+
+        static void RegisterUser()
+        {
+            int newUID = 1;
+
+            // If there are users in the list, find the maximum UID 
+            if (Users.Count > 0)
+            {
+                newUID = Users[0].UID; // Start by assuming the first user's UID is the highest
+
+                // Loop through the Users list to find the maximum UID
+                for (int i = 1; i < Users.Count; i++)
+                {
+                    if (Users[i].UID > newUID)
+                    {
+                        newUID = Users[i].UID; // Update if we find a higher UID
+                    }
+                }
+                newUID++; // Increment to get the next available UID
+            }
+
+            Console.WriteLine("Enter your name:");
+            string userName = Console.ReadLine();
+
+            // Use a loop to check for duplicate usernames
+            for (int i = 0; i < Users.Count; i++)
+            {
+                if (Users[i].UserName == userName)
+                {
+                    Console.WriteLine("Username already exists.");
+                    return;
+                }
+            }
+
+            string email = GetValidEmail();
+            string password = GetValidPassword();
+
+            Users.Add((newUID, userName, email, password));
+            Console.WriteLine("User registered successfully!");
+            SaveUserToFile();
+            UserFunction();
+        }
+        static void LoginUser()
+        {
+
+            Console.WriteLine("Enter your email:");
+            string email = Console.ReadLine();
+
+            // Check if the email exists in the Users list
+            bool userFound = false;
+            int userIndex = -1;
+
+            for (int i = 0; i < Users.Count; i++)
+            {
+                if (Users[i].email == email)
+                {
+                    userFound = true;
+                    userIndex = i;
+                    break;
+                }
+            }
+
+            if (!userFound)
+            {
+                Console.WriteLine("User is not registered. Do you want to register? (yes / no )");
+                if (Console.ReadLine().ToLower() == "yes")
+                {
+                    RegisterUser();
+                }
+                else
+                {
+                    UserFunction();
+                }
+            }
+            else
+            {
+                var user = Users[userIndex];
+                if (Authenticate(user.password))
+                {
+                    UserMenu(user.UID);
+                }
+            }
+        }
+
+        static void UserMenu(int userID)
+        {
+
+            LoadBorrowCountsFromFile();
+            CheckOverdueBooks(userID);
+
+            bool exitFlag = false;
+
+            do
+            {
+                Console.Clear();
+
+                Console.WriteLine($"Welcome to the Library");
+                Console.WriteLine("\nEnter the number of the operation you need:");
+                Console.WriteLine("\n1 - Search for Book by Name");
+                Console.WriteLine("2 - Borrow Book");
+                Console.WriteLine("3 - Return Book");
+                Console.WriteLine("4 - Show Your Profile");
+                Console.WriteLine("5 - Sign Out");
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        Console.Clear();
+                        SearchForBookForUser(userID);
+                        break;
+
+                    case "2":
+                        Console.Clear();
+                        BorrowBook(userID);
+                        break;
+
+                    case "3":
+                        Console.Clear();
+                        ReturnBook(userID);
+                        break;
+
+
+                    case "4":
+                        Console.Clear();
+                        ShowProfile(userID);
+                        break;
+
+                    case "5":
+                        Console.Clear();
+                        SaveBooksToFile();
+
+                        Console.WriteLine("\nPress Enter key to exit the system...");
+                        Console.ReadLine();
+                        exitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+
+                if (!exitFlag)
+                {
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                }
+
+            } while (!exitFlag);
+        }
+
+        static void UserFunction()
+        {
+            bool ExitFlag = false;
+            while (ExitFlag != true)
+            {
+
+                Console.WriteLine("Welcome User");
+                Console.WriteLine("\n Enter the char of operation you need :");
+                Console.WriteLine("\n A- User registeration");
+                Console.WriteLine("\n B- User login");
+                Console.WriteLine("\n C-  Exit");
+
+                string choice = Console.ReadLine().ToUpper(); ;
+
+                switch (choice)
+                {
+                    case "A":
+                        RegisterUser();
+                        break;
+                    case "B":
+                        LoadUserFromFile();
+                        LoginUser();
+                        break;
+
+                    case "C":
+
+                        ExitFlag = true;
+                        break;
+
+                    default:
+                        Console.WriteLine("Sorry your choice was wrong");
+                        break;
+
+
+
+                }
+
+
+
+            }
+        }
+        static void CheckOverdueBooks(int userId)
+        {
+            bool hasOverdue = false;
+            DateTime today = DateTime.Now;
+
+            Console.WriteLine("Checking for overdue books...");
+
+            foreach (var borrow in borrowBook)
+            {
+                if (borrow.UId == userId && !borrow.isReturn && borrow.Rdate < today)
+                {
+                    hasOverdue = true;
+                    Console.WriteLine($"Overdue Book: {borrow.BId}");
+                }
+            }
+
+            if (hasOverdue)
+            {
+                Console.WriteLine("\nYou have overdue books. Please return them before proceeding.");
+                ReturnBook(userId);
+            }
+            else
+            {
+                Console.WriteLine("No overdue books found.");
+            }
+        }
+
+        static void SearchForBookForUser(int userID)
+        {
+            Console.Clear();
+            ViewAllBooks();
+            if (Books == null || Books.Count == 0)
+            {
+                Console.WriteLine("No books available to display.");
+                return;
+            }
+            try
+            {
+
+                Console.WriteLine("Enter part of the book name you want to search for");
+                string searchTerm = Console.ReadLine();
+                bool flag = false;
+
+                foreach (var book in Books)
+                {
+                    if (book.BName.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        Console.WriteLine("\n====================================");
+                        Console.WriteLine($"Book Name: {book.BName}");
+                        Console.WriteLine($"Author: {book.BAuthor}");
+                        Console.WriteLine($"Copies: {book.copies}");
+                        Console.WriteLine($"Borrowed Copies: {book.BorrowedCopies}");
+                        Console.WriteLine($"Price: ${book.Price:F2}");
+                        Console.WriteLine($"Category: {book.Category}");
+                        Console.WriteLine($"Borrow Period: {book.BorrowPeriod} days");
+                        Console.WriteLine("====================================");
+                        flag = true;
+
+                        Console.WriteLine("Would you like to borrow this book? (yes/no)");
+                        string response = Console.ReadLine().ToLower();
+
+                        if (response == "yes")
+                        {
+                            BorrowBook(userID);
+                        }
+                        break;
+                    }
+                }
+
+                if (flag != true)
+                { Console.WriteLine("book not found"); }
+
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("An error occurred while searching for the book: " + ex.Message);
+            }
+
+        }
+        static void BorrowBook(int userId)
+        {
+            // Clear and reload the book and borrowing data
+            Books.Clear();
+            LoadBooksFromFile();
+
+            borrowBook.Clear();
+            LoadBorrowCountsFromFile();
+
+            // Display borrowing interface
+            Console.Clear();
+            Console.WriteLine("===================================");
+            Console.WriteLine("          Borrow a Book            ");
+            Console.WriteLine("===================================");
+
+            // Display available books
+            Console.WriteLine("\nAvailable Books for Borrowing:");
+            Console.WriteLine("{0,-5} | {1,-30} | {2,-20} | {3,-10} | {4,-10} | {5,-10} | {6,-15} | {7,-5}",
+                              "ID", "Title", "Author", "Copies", "Borrowed", "Price", "Category", "Period");
+            Console.WriteLine(new string('-', 110)); // Divider line
+
+            foreach (var book in Books)
+            {
+                if (book.copies > 0)
+                {
+                    Console.WriteLine("{0,-5} | {1,-30} | {2,-20} | {3,-10} | {4,-10} | {5,-10:F2} | {6,-15} | {7,-5} days",
+                                      book.ID, book.BName, book.BAuthor, book.copies,
+                                      book.BorrowedCopies, book.Price, book.Category,
+                                      book.BorrowPeriod);
+                }
+            }
+
+            // Prompt the user to enter the Book ID
+            Console.WriteLine("\nPlease enter the Book ID to borrow:");
+            if (!int.TryParse(Console.ReadLine(), out int ID))
+            {
+                Console.WriteLine("Invalid input. Please enter a valid Book ID.");
+                return;
+            }
+
+            // Check if the book is available for borrowing
+            bool bookFound = false;
+            for (int i = 0; i < Books.Count; i++)
+            {
+                if (Books[i].ID == ID)
+                {
+                    bookFound = true;
+
+                    // Check if all copies of the book are borrowed
+                    if (Books[i].copies > Books[i].BorrowedCopies)
+                    {
+                        // Check if the user has already borrowed this book
+                        bool isAlreadyBorrowed = false;
+                        for (int j = 0; j < borrowBook.Count; j++)
+                        {
+                            if (borrowBook[j].UId == userId && borrowBook[j].BId == ID && !borrowBook[j].isReturn)
+                            {
+                                isAlreadyBorrowed = true;
+                                Console.WriteLine("\nYou have already borrowed this book.");
+                                Console.WriteLine("\nDo you want to borrow another book?");
+                                Console.WriteLine("1. Yes");
+                                Console.WriteLine("2. No");
+
+                                string choice = Console.ReadLine();
+                                if (choice == "1")
+                                {
+                                    BorrowBook(userId);
+                                }
+                                else
+                                {
+                                    UserMenu(userId);
+                                }
+                                return;
+                            }
+                        }
+
+                        // If the book is available and not already borrowed by the user
+                        if (!isAlreadyBorrowed)
+                        {
+                            // Display book details
+                            Console.WriteLine("\nBook '{0}' is available for borrowing.", Books[i].BName);
+                            Console.WriteLine("Author: {0}, Price: {1:C}, Borrow Period: {2} days",
+                                              Books[i].BAuthor, Books[i].Price, Books[i].BorrowPeriod);
+
+                            // Confirm borrowing
+                            Console.WriteLine("\nTo confirm borrowing, press 1. To cancel, press any other key.");
+                            string confirmChoice = Console.ReadLine();
+
+                            if (confirmChoice == "1")
+                            {
+                                DateTime today = DateTime.Today;
+                                DateTime returnDate = today.AddDays(Books[i].BorrowPeriod);
+
+                                // Update book info
+                                Books[i] = (Books[i].ID, Books[i].BName, Books[i].BAuthor,
+                                            Books[i].copies, Books[i].BorrowedCopies + 1,
+                                            Books[i].Price, Books[i].Category, Books[i].BorrowPeriod);
+
+                                // Update the borrow record and save changes
+                                SaveBooksToFile();
+                                borrowBook.Add((userId, ID, today, returnDate, null, null, false));
+                                BorrowedBookFile();
+
+                                Console.WriteLine("\nThank you! Please return the book within {0} days.", Books[i].BorrowPeriod);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Borrowing cancelled.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nNo copies available for borrowing.");
+                    }
+                    break;
+                }
+            }
+
+            // If the book ID was not found
+            if (!bookFound)
+            {
+                Console.WriteLine("\nBook with ID {0} is not available in the library.", ID);
+            }
+        }
+        static void ReturnBook(int userId)
+        {
+            // Clear screen and display heading
+            Console.Clear();
+            Console.WriteLine("===================================");
+            Console.WriteLine("          Return a Book            ");
+            Console.WriteLine("===================================");
+            Console.WriteLine("\nBooks you are currently borrowing:");
+
+            bool booksToReturn = false;
+
+            // Display books the user is currently borrowing and hasn't returned
+            for (int i = 0; i < borrowBook.Count; i++)
+            {
+                if (borrowBook[i].UId == userId && !borrowBook[i].isReturn)
+                {
+                    booksToReturn = true;
+
+                    // Find and display book details
+                    for (int j = 0; j < Books.Count; j++)
+                    {
+                        if (Books[j].ID == borrowBook[i].BId)
+                        {
+                            Console.WriteLine("-----------------------------------------------------");
+                            Console.WriteLine("Book ID: {0}", Books[j].ID);
+                            Console.WriteLine("Title:   {0}", Books[j].BName);
+                            Console.WriteLine("Author:  {0}", Books[j].BAuthor);
+                            Console.WriteLine("Borrowed on: {0}", borrowBook[i].Bdate.ToShortDateString());
+                            Console.WriteLine("-----------------------------------------------------");
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!booksToReturn)
+            {
+                Console.WriteLine("\nYou have no books to return.");
+                return;
+            }
+
+            // Prompt the user to enter the Book ID to return
+            Console.Write("\nEnter the Book ID you want to return: ");
+            if (!int.TryParse(Console.ReadLine(), out int bookId))
+            {
+                Console.WriteLine("Invalid input. Please enter a valid Book ID.");
+                return;
+            }
+
+            bool bookFound = false;
+
+            // Find the borrowing record and update it
+            for (int i = 0; i < borrowBook.Count; i++)
+            {
+                if (borrowBook[i].UId == userId && borrowBook[i].BId == bookId && !borrowBook[i].isReturn)
+                {
+                    // Update the borrowing record to reflect the return
+                    borrowBook[i] = (borrowBook[i].UId, borrowBook[i].BId, borrowBook[i].Bdate, borrowBook[i].Rdate, DateTime.Now, borrowBook[i].Rating, true);
+                    bookFound = true;
+
+                    // Update the book inventory (increment available copies and decrement borrowed copies)
+                    for (int j = 0; j < Books.Count; j++)
+                    {
+                        if (Books[j].ID == bookId)
+                        {
+                            Books[j] = (Books[j].ID, Books[j].BName, Books[j].BAuthor, Books[j].copies + 1, Books[j].BorrowedCopies - 1, Books[j].Price, Books[j].Category, Books[j].BorrowPeriod);
+                            break;
+                        }
+                    }
+
+                    // Prompt the user for a rating (optional, but recommended)
+                    Console.Write("\nPlease rate the book (1-5): ");
+                    int rating;
+                    while (!int.TryParse(Console.ReadLine(), out rating) || rating < 1 || rating > 5)
+                    {
+                        Console.WriteLine("Invalid rating. Please enter a number between 1 and 5.");
+                    }
+
+                    // Update the rating in the borrowing record
+                    borrowBook[i] = (borrowBook[i].UId, borrowBook[i].BId, borrowBook[i].Bdate, borrowBook[i].Rdate, borrowBook[i].ActualRD, rating, true);
+
+                    Console.WriteLine("\nThank you! You have successfully returned the book.");
+                    break;
+                }
+            }
+
+            // If the book ID entered was not found
+            if (!bookFound)
+            {
+                Console.WriteLine("\nInvalid book selection. Please try again.");
+            }
+
+            // Save the updated information to the respective files
+            SaveBooksToFile();
+            BorrowedBookFile();
+        }
+
+        static void SaveUserToFile()
+        {
+            try
+            {
+
+                using (StreamWriter writer = new StreamWriter(filePathUser))
+                {
+                    foreach (var user in Users)
+                    {
+                        writer.WriteLine($"{user.UID}|{user.UserName}|{user.email}|{user.password}");
+                    }
+                }
+                Console.WriteLine("user saved to file successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving to file: {ex.Message}");
+            }
+        }
+        static void LoadUserFromFile()
+        {
+            try
+            {
+                if (File.Exists(filePathUser))
+                {
+                    using (StreamReader reader = new StreamReader(filePathUser))
+                    {
+
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var parts = line.Split('|');
+                            if (parts.Length == 4)
+                            {
+                                Users.Add((int.Parse(parts[0].Trim()), parts[1].Trim(), parts[2].Trim(), parts[3].Trim()));
+                            }
+                        }
+                    }
+                    Console.WriteLine("user loaded from file successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
+            }
+        }
+
+        static void ShowProfile(int userId)
+        {
+
+            (int UID, string UserName, string email, string password)? foundUser = null;
+
+            foreach (var user in Users)
+            {
+                if (user.UID == userId)
+                {
+                    foundUser = user;
+                    break;
+                }
+            }
+
+            // Display user information
+            if (foundUser.HasValue)
+            {
+                var user = foundUser.Value;  // Extract the tuple
+                Console.WriteLine("\nUser Profile");
+                Console.WriteLine(new string('-', 30));
+                Console.WriteLine($"ID      : {user.UID}");
+                Console.WriteLine($"Name    : {user.UserName}");
+                Console.WriteLine($"Email   : {user.email}");
+                Console.WriteLine(new string('-', 30));
+            }
+            else
+            {
+                Console.WriteLine("User not found.");
+                return;
+            }
+
+            // Display books currently borrowed by the user
+            Console.WriteLine("\nBooks Currently Borrowed");
+            Console.WriteLine(new string('-', 30));
+
+            bool hasCurrentBorrowedBooks = false;
+            foreach (var borrowEntry in borrowBook)
+            {
+                if (borrowEntry.UId == userId && !borrowEntry.isReturn)
+                {
+                    // Find the book details 
+                    foreach (var book in Books)
+                    {
+                        if (book.ID == borrowEntry.BId)
+                        {
+                            Console.WriteLine($"Book Name  : {book.BName}");
+                            Console.WriteLine($"Borrowed On: {borrowEntry.Bdate:yyyy-MM-dd}");
+                            Console.WriteLine($"Return By  : {borrowEntry.Rdate:yyyy-MM-dd}");
+                            Console.WriteLine(new string('-', 30));
+                            hasCurrentBorrowedBooks = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hasCurrentBorrowedBooks)
+            {
+                Console.WriteLine("No currently borrowed books.");
+                Console.WriteLine(new string('-', 30));
+            }
+
+            // Display books previously borrowed and returned
+            Console.WriteLine("\nBooks Previously Borrowed");
+            Console.WriteLine(new string('-', 30));
+
+            bool hasReturnedBooks = false;
+            foreach (var borrowEntry in borrowBook)
+            {
+                if (borrowEntry.UId == userId && borrowEntry.isReturn)
+                {
+                    // Find the book details manually using foreach
+                    foreach (var book in Books)
+                    {
+                        if (book.ID == borrowEntry.BId)
+                        {
+                            string rating = borrowEntry.Rating.HasValue ? borrowEntry.Rating.ToString() : "No rating";
+                            Console.WriteLine($"Book Name   : {book.BName}");
+                            Console.WriteLine($"Returned On : {borrowEntry.ActualRD:yyyy-MM-dd}");
+                            Console.WriteLine($"Rating      : {rating}");
+                            Console.WriteLine(new string('-', 30));
+                            hasReturnedBooks = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (!hasReturnedBooks)
+            {
+                Console.WriteLine("No previously borrowed books.");
+                Console.WriteLine(new string('-', 30));
+            }
+        }
+
+        static void LoadBooksFromFile()
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (StreamReader reader = new StreamReader(filePath))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var parts = line.Split('|');
+                            if (parts.Length == 8)
+                            {
+                                Books.Add((int.Parse(parts[0].Trim()), parts[1].Trim(), parts[2].Trim(), int.Parse(parts[3].Trim()),
+                                    int.Parse(parts[4].Trim()), double.Parse(parts[5].Trim()), parts[6].Trim(), int.Parse(parts[7].Trim())));
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading from file: {ex.Message}");
+            }
+        }
+
+
+
 
 
 
